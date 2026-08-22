@@ -261,8 +261,8 @@
     }
     el.textContent = msg;
     el.classList.remove('hidden');
-    el.classList.remove('text-emerald-400', 'text-[var(--crimson-soft)]', 'text-[#8a7a63]');
-    el.classList.add(tone === 'ok' ? 'text-emerald-400' : tone === 'bad' ? 'text-[var(--crimson-soft)]' : 'text-[#8a7a63]');
+    el.classList.remove('text-emerald-400', 'text-[var(--crimson-soft)]', 'text-[#6b6152]');
+    el.classList.add(tone === 'ok' ? 'text-emerald-400' : tone === 'bad' ? 'text-[var(--crimson-soft)]' : 'text-[#6b6152]');
   }
 
   function validateUsernameLive() {
@@ -392,19 +392,19 @@
     }
     items.forEach((item, idx) => {
       const card = document.createElement('div');
-      card.className = 'relative rounded-xl overflow-hidden border border-[var(--line)] bg-[#1c150d] group card-rise-in';
+      card.className = 'relative rounded-xl overflow-hidden border border-[var(--line)] bg-[#ffffff] group card-rise-in';
       card.style.setProperty('--i', idx);
       card.innerHTML = `
         <img src="${item.thumb}" alt="${KIND_LABELS[item.kind] || 'Foto'}" class="w-full aspect-[3/4] object-cover">
         <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 pt-4 pb-1.5">
-          <p class="text-[10px] font-bold text-[#f0d29a] leading-tight">${KIND_LABELS[item.kind] || 'Foto'}</p>
-          <p class="text-[9px] text-[#c9b896]">${timeAgoLabel(item.ts)}</p>
+          <p class="text-[10px] font-bold text-[#f3e6c7] leading-tight">${KIND_LABELS[item.kind] || 'Foto'}</p>
+          <p class="text-[9px] text-[#d6c6a0]">${timeAgoLabel(item.ts)}</p>
         </div>
         <div class="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition">
-          <a href="${item.thumb}" download="${item.filename || 'jepretin.jpg'}" title="Unduh" class="w-7 h-7 flex items-center justify-center rounded-full bg-black/60 text-[#e9dcc3] hover:text-[var(--brass-soft)]">
+          <a href="${item.thumb}" download="${item.filename || 'jepretin.jpg'}" title="Unduh" class="w-7 h-7 flex items-center justify-center rounded-full bg-black/60 text-[#241f16] hover:text-[var(--brass-soft)]">
             <i class="fa-solid fa-download text-[11px]"></i>
           </a>
-          <button onclick="JepretinAuth.deleteHistoryEntry('${item.id}')" title="Hapus" class="w-7 h-7 flex items-center justify-center rounded-full bg-black/60 text-[#e9dcc3] hover:text-[var(--crimson-soft)]">
+          <button onclick="JepretinAuth.deleteHistoryEntry('${item.id}')" title="Hapus" class="w-7 h-7 flex items-center justify-center rounded-full bg-black/60 text-[#241f16] hover:text-[var(--crimson-soft)]">
             <i class="fa-solid fa-trash text-[11px]"></i>
           </button>
         </div>`;
