@@ -1,19 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Pacifico&family=Fira+Code:wght@500;600&family=Press+Start+2P&family=Caveat:wght@700&family=Bungee&display=swap');
 
     :root {
-      /* Vintage arcade-photobooth palette: brushed brass, mahogany panel, marquee amber, curtain crimson.
-         One warm family throughout — no unrelated neon accents. */
-      --ink: #090604;
-      --panel: #1b140dcc;
-      --panel-solid: #17110b;
-      --wood: #2a1c10;
-      --brass: #c9974a;
-      --brass-soft: #f0d29a;
-      --brass-dim: #8a6a3a;
-      --crimson: #9c2f2f;
-      --crimson-soft: #c2534f;
-      --marquee: #ffc94d;
-      --line: rgba(201,151,74,0.16);
+      /* Clean Premium palette: warm paper-white base, deep champagne-gold accent,
+         soft terracotta secondary, crisp ink text. Bright and editorial, still refined. */
+      --ink: #faf7f1;
+      --panel: #ffffffd9;
+      --panel-solid: #ffffff;
+      --wood: #e6dcc0;
+      --brass: #c9a04a;
+      --brass-soft: #93691f;
+      --brass-dim: #6b6152;
+      --crimson: #c96b4a;
+      --crimson-soft: #9c3f26;
+      --marquee: #b8860b;
+      --line: rgba(40,32,20,0.16);
+      --text: #241f16;
     }
 
     html {
@@ -60,35 +61,30 @@
 
     body {
       background:
-        repeating-linear-gradient(115deg, rgba(240,210,154,0.02) 0px, rgba(240,210,154,0.02) 1px, transparent 1px, transparent 7px),
-        radial-gradient(circle, rgba(240,210,154,0.07) 1px, transparent 1.4px),
-        radial-gradient(circle, rgba(240,210,154,0.035) 1px, transparent 1.6px),
-        radial-gradient(ellipse at 20% 0%, rgba(201,151,74,0.15), transparent 44%),
-        radial-gradient(ellipse at 82% 6%, rgba(156,47,47,0.12), transparent 40%),
-        radial-gradient(ellipse at 50% 108%, rgba(255,201,77,0.08), transparent 48%),
-        radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(0,0,0,0.78) 100%),
+        radial-gradient(ellipse at 20% 0%, rgba(169,125,53,0.07), transparent 44%),
+        radial-gradient(ellipse at 82% 6%, rgba(174,90,60,0.05), transparent 40%),
+        radial-gradient(ellipse at 50% 108%, rgba(201,160,74,0.06), transparent 48%),
         var(--ink);
-      background-size: auto, 26px 26px, 54px 54px, auto, auto, auto, auto, auto;
-      background-position: 0 0, 0 0, 13px 20px, 0 0, 0 0, 0 0, 0 0, 0 0;
       position: relative;
     }
-    /* Subtle film-grain so panels read as physical stock, not a flat digital gradient */
+    /* Very faint texture so panels still read as a considered surface, not a flat digital gradient,
+       without the heavy dark grain the old vintage theme used. */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      opacity: 0.05; mix-blend-mode: overlay;
+      opacity: 0.025; mix-blend-mode: multiply;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
     .text-balance { text-wrap: balance; }
-    ::selection { background: rgba(201,151,74,0.35); color: #fff; }
+    ::selection { background: rgba(169,125,53,0.28); color: #241f16; }
     :focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
-    /* Brass-themed scrollbar so the browser's default grey bar doesn't break the vintage look
-       on desktop/laptop (macOS overlay scrollbars are unaffected, which is fine). */
-    * { scrollbar-width: thin; scrollbar-color: var(--brass-dim) rgba(0,0,0,0.35); }
+    /* Champagne-gold scrollbar so the browser's default grey bar doesn't break the clean,
+       premium look on desktop/laptop (macOS overlay scrollbars are unaffected, which is fine). */
+    * { scrollbar-width: thin; scrollbar-color: var(--brass-dim) rgba(0,0,0,0.08); }
     ::-webkit-scrollbar { width: 10px; height: 10px; }
-    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.35); border-radius: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.06); border-radius: 8px; }
     ::-webkit-scrollbar-thumb {
       background: linear-gradient(180deg, var(--brass-soft), var(--brass-dim));
       background-clip: padding-box; border: 2px solid transparent; border-radius: 8px;
@@ -102,18 +98,16 @@
        animates across the panel so it catches the light like a real brushed surface. */
     .panel-machine {
       background-image:
-        linear-gradient(115deg, transparent 35%, rgba(240,210,154,0.16) 48%, rgba(240,210,154,0.24) 50%, rgba(240,210,154,0.16) 52%, transparent 65%),
-        repeating-linear-gradient(115deg, rgba(240,210,154,0.07) 0px, rgba(240,210,154,0.07) 1px, transparent 1px, transparent 4px),
-        repeating-linear-gradient(115deg, rgba(0,0,0,0.24) 0px, rgba(0,0,0,0.24) 1px, transparent 1px, transparent 9px),
-        linear-gradient(180deg, rgba(255,255,255,0.04), transparent 42%),
-        radial-gradient(ellipse at 22% -8%, rgba(201,151,74,0.16), transparent 55%),
-        linear-gradient(180deg, #1c150d, #150f09);
-      background-size: 260% 260%, auto, auto, auto, auto, auto;
-      background-repeat: no-repeat, repeat, repeat, no-repeat, no-repeat, no-repeat;
-      background-position: -60% -60%, 0 0, 0 0, 0 0, 0 0, 0 0;
+        linear-gradient(115deg, transparent 35%, rgba(169,125,53,0.07) 48%, rgba(169,125,53,0.1) 50%, rgba(169,125,53,0.07) 52%, transparent 65%),
+        linear-gradient(180deg, rgba(0,0,0,0.015), transparent 42%),
+        radial-gradient(ellipse at 22% -8%, rgba(169,125,53,0.06), transparent 55%),
+        linear-gradient(180deg, #ffffff, #faf7f1);
+      background-size: 260% 260%, auto, auto, auto;
+      background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+      background-position: -60% -60%, 0 0, 0 0, 0 0;
       animation: panelSheen 10s ease-in-out infinite;
-      border: 1px solid rgba(201,151,74,0.18);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.45), 0 18px 40px -18px rgba(0,0,0,0.7);
+      border: 1px solid rgba(40,32,20,0.14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 14px 30px -16px rgba(36,31,22,0.22);
     }
     @keyframes panelSheen {
       0%, 100% { background-position: -60% -60%, 0 0, 0 0, 0 0, 0 0, 0 0; }
@@ -127,7 +121,7 @@
       display: inline-flex; align-items: center; justify-content: center;
       min-width: 1.6rem; height: 1.3rem; padding: 0 0.4rem;
       background: linear-gradient(180deg, var(--brass-soft), var(--brass));
-      color: #1c1206; font-family: 'Fira Code', monospace; font-weight: 700; font-size: 10px;
+      color: #22261c; font-family: 'Fira Code', monospace; font-weight: 700; font-size: 10px;
       border-radius: 3px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 1px 2px rgba(0,0,0,0.4);
       letter-spacing: 0.02em;
     }
@@ -147,9 +141,9 @@
     /* ---------- Grand Reveal: the moment the last pose lands, the strip gets a
        spotlight sweep + glow pulse and a "SESI SELESAI" banner pops on top. ---------- */
     @keyframes revealSweep {
-      0%   { box-shadow: 0 0 0 0 rgba(255,201,77,0), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.45); filter: brightness(1) saturate(1); }
-      28%  { box-shadow: 0 0 70px 12px rgba(255,201,77,0.55), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.45); filter: brightness(1.22) saturate(1.15); }
-      100% { box-shadow: 0 0 0 0 rgba(255,201,77,0), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.45); filter: brightness(1) saturate(1); }
+      0%   { box-shadow: 0 0 0 0 rgba(212,184,118,0), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.45); filter: brightness(1) saturate(1); }
+      28%  { box-shadow: 0 0 70px 12px rgba(212,184,118,0.55), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.45); filter: brightness(1.22) saturate(1.15); }
+      100% { box-shadow: 0 0 0 0 rgba(212,184,118,0), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.45); filter: brightness(1) saturate(1); }
     }
     .grand-reveal { animation: revealSweep 1.15s ease-out; }
     @keyframes bannerPop {
@@ -164,7 +158,7 @@
       position: absolute; top: 42%; left: 50%; z-index: 40; white-space: nowrap; pointer-events: none;
       padding: 10px 20px; border-radius: 9999px; text-align: center;
       background: linear-gradient(135deg, var(--marquee), var(--brass));
-      color: #1c1206; font-family: 'Bungee', cursive; font-size: 12px; letter-spacing: 0.03em;
+      color: #22261c; font-family: 'Bungee', cursive; font-size: 12px; letter-spacing: 0.03em;
       box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.55);
       animation: bannerPop 0.6s cubic-bezier(.2,.8,.25,1) both, bannerFadeOut 0.4s ease-in 1.7s forwards;
     }
@@ -192,8 +186,8 @@
     }
     .splash-logo-pop { animation: splashLogoPop 0.7s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
     @keyframes splashRingPulse {
-      0% { box-shadow: 0 0 0 0 rgba(216,176,118,0.45); }
-      100% { box-shadow: 0 0 0 18px rgba(216,176,118,0); }
+      0% { box-shadow: 0 0 0 0 rgba(194,172,124,0.45); }
+      100% { box-shadow: 0 0 0 18px rgba(194,172,124,0); }
     }
     .splash-ring { animation: splashRingPulse 1.8s ease-out infinite; }
     @keyframes splashTextIn {
@@ -207,7 +201,7 @@
        like a lens aperture to reveal the splash underneath. ---- */
     #shutter-iris {
       position: fixed; inset: 0; z-index: 110; pointer-events: none;
-      background: #050302;
+      background: #0f110b;
       clip-path: circle(150% at 50% 50%);
       animation: shutterOpen 0.85s cubic-bezier(0.76,0,0.24,1) forwards;
       animation-delay: 0.08s;
@@ -224,7 +218,7 @@
     /* ---- Flash-bulb pop behind the logo, timed to the shutter opening ---- */
     .splash-flash-pop {
       position: absolute; inset: -46px; border-radius: 9999px; z-index: 1;
-      background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,229,180,0.45) 42%, transparent 72%);
+      background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(236,224,200,0.45) 42%, transparent 72%);
       opacity: 0; animation: flashPopOnce 0.55s ease-out forwards; animation-delay: 0.55s;
     }
     @keyframes flashPopOnce {
@@ -272,7 +266,7 @@
     .splash-filmstrip { position: relative; }
     .splash-filmstrip::before, .splash-filmstrip::after {
       content: ""; position: absolute; left: 2px; right: 2px; height: 2px;
-      background-image: repeating-linear-gradient(90deg, #0a0704 0 3px, transparent 3px 7px);
+      background-image: repeating-linear-gradient(90deg, #6b6152 0 3px, transparent 3px 7px);
     }
     .splash-filmstrip::before { top: -4px; }
     .splash-filmstrip::after { bottom: -4px; }
@@ -300,7 +294,7 @@
        into an old film canister — reinforces the analog-camera mood while loading. ---- */
     .splash-light-leak {
       position: absolute; inset: 0; z-index: 1; pointer-events: none; mix-blend-mode: screen;
-      background: linear-gradient(120deg, transparent 30%, rgba(255,176,92,0.16) 46%, rgba(255,214,150,0.24) 50%, rgba(255,176,92,0.16) 54%, transparent 70%);
+      background: linear-gradient(120deg, transparent 30%, rgba(185,160,110,0.16) 46%, rgba(236,224,200,0.24) 50%, rgba(185,160,110,0.16) 54%, transparent 70%);
       background-size: 300% 300%;
       animation: splashLightLeak 5s ease-in-out infinite;
     }
@@ -317,7 +311,7 @@
     .splash-dust { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
     .splash-dust-mote {
       position: absolute; bottom: -10px; border-radius: 9999px;
-      background: radial-gradient(circle, rgba(255,224,170,0.9), rgba(255,224,170,0));
+      background: radial-gradient(circle, rgba(236,224,200,0.9), rgba(236,224,200,0));
       animation: splashDustRise linear infinite;
     }
     @keyframes splashDustRise {
@@ -331,7 +325,7 @@
        texture layers. ---- */
     .splash-vignette {
       position: absolute; inset: 0; z-index: 2; pointer-events: none;
-      background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(5,3,2,0.55) 100%);
+      background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(15,17,11,0.55) 100%);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -354,7 +348,7 @@
     }
     #splash-screen.splash-shutter-close::after {
       content: ""; position: absolute; inset: 0; z-index: 5;
-      background: #050302;
+      background: #0f110b;
       clip-path: circle(0% at 50% 50%);
       animation: shutterCloseIn 0.45s cubic-bezier(0.76,0,0.24,1) forwards;
       animation-delay: 0.12s;
@@ -376,7 +370,7 @@
     #auth-screen.auth-fade-out { opacity: 0; pointer-events: none; }
     /* Returning logged-in users skip straight past the auth gate to the landing page */
     .jp-logged-in #auth-screen { display: none !important; }
-    #auth-tab-login.mode-active, #auth-tab-register.mode-active { background: var(--brass); color: #241705; }
+    #auth-tab-login.mode-active, #auth-tab-register.mode-active { background: var(--brass); color: #22261c; }
     @keyframes authShake {
       10%, 90% { transform: translateX(-1px); }
       20%, 80% { transform: translateX(2px); }
@@ -396,7 +390,7 @@
     }
     /* Brass corner rivets, a real cabinet-machine detail */
     .rivet { position: absolute; width: 7px; height: 7px; border-radius: 9999px;
-      background: radial-gradient(circle at 32% 28%, #f3dba8, var(--brass) 55%, #6b4e26 100%);
+      background: radial-gradient(circle at 32% 28%, #f3e6c7, var(--brass) 55%, #7a6a48 100%);
       box-shadow: 0 1px 2px rgba(0,0,0,0.6), inset 0 0 1px rgba(255,255,255,0.4); z-index: 5; }
 
     /* Neon eyebrow badge */
@@ -406,7 +400,7 @@
     /* Soft warm spotlight glow behind the print strip */
     .strip-spotlight {
       position: absolute; left: 50%; top: 8%; width: 220px; height: 220px; transform: translateX(-50%);
-      background: radial-gradient(circle, rgba(240,210,154,0.22), transparent 68%);
+      background: radial-gradient(circle, rgba(236,224,200,0.22), transparent 68%);
       filter: blur(4px); pointer-events: none; z-index: 0;
     }
 
@@ -500,13 +494,13 @@
 
     /* Skeuomorphic pressed-brass button, used instead of flat gradient CTAs */
     .btn-brass {
-      background: linear-gradient(180deg, var(--brass-soft) 0%, var(--brass) 55%, #a97c3c 100%);
-      color: #241705;
+      background: linear-gradient(180deg, var(--brass-soft) 0%, var(--brass) 55%, #8f7c50 100%);
+      color: #22261c;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 4px rgba(0,0,0,0.25), 0 6px 16px -6px rgba(0,0,0,0.6);
       border: 1px solid rgba(0,0,0,0.25);
     }
     .btn-brass:active { box-shadow: inset 0 2px 5px rgba(0,0,0,0.35); transform: translateY(1px); }
-    .btn-brass:disabled { background: #2a2620; color: #6b665c; box-shadow: none; border-color: rgba(255,255,255,0.06); }
+    .btn-brass:disabled { background: #ece7db; color: #a39781; box-shadow: none; border-color: rgba(0,0,0,0.05); }
 
     @keyframes ledPulse { 0%, 100% { box-shadow: 0 0 4px 1px currentColor; } 50% { box-shadow: 0 0 12px 4px currentColor; } }
     .led-ready { animation: ledPulse 1.4s ease-in-out infinite; }
@@ -567,8 +561,8 @@
     }
     .frame-polaroid {
       background: linear-gradient(165deg, #ffffff, #f7f5f0 55%, #efece4 100%);
-      color: #1f2937; border: 3px solid #e5e7eb;
-      box-shadow: inset 0 0 0 10px #ffffff, 0 18px 30px -16px rgba(0,0,0,0.35);
+      color: #1f2937; border: 3px solid #c7c2b8;
+      box-shadow: inset 0 0 0 10px #ffffff, 0 8px 20px -10px rgba(0,0,0,0.28);
     }
     .frame-film {
       background: repeating-linear-gradient(180deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 5px), radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 50%), linear-gradient(160deg, #1c1c1c, #0d0d0d 75%);
@@ -664,17 +658,17 @@
     .seasonal-badge {
       position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
       font-size: 9px; font-weight: 800; white-space: nowrap; padding: 2px 7px; border-radius: 999px;
-      background: linear-gradient(135deg, var(--marquee, #e0b23d), #f3d789); color: #241705;
+      background: linear-gradient(135deg, var(--marquee, #b8860b), #e0c467); color: #22261c;
       box-shadow: 0 2px 6px rgba(0,0,0,0.35); z-index: 2;
       animation: seasonalPulse 1.8s ease-in-out infinite;
     }
-    .seasonal-pick { outline: 2px dashed var(--marquee, #e0b23d); outline-offset: 3px; }
+    .seasonal-pick { outline: 2px dashed var(--marquee, #b8860b); outline-offset: 3px; }
     @keyframes seasonalPulse {
       0%, 100% { transform: translateX(-50%) scale(1); }
       50% { transform: translateX(-50%) scale(1.08); }
     }
 
-    .active-choice { outline: 2px solid var(--brass); outline-offset: 2px; box-shadow: 0 0 0 4px rgba(216,176,118,0.15); transition: outline-offset .18s ease, box-shadow .18s ease; }
+    .active-choice { outline: 2px solid var(--brass); outline-offset: 2px; box-shadow: 0 0 0 4px rgba(194,172,124,0.15); transition: outline-offset .18s ease, box-shadow .18s ease; }
 
     /* Consistent, restrained hover feedback for every theme swatch in the
        frame picker — a gentle lift instead of a jump, so browsing the 20
@@ -690,7 +684,7 @@
 
     /* Frame-corner brackets: reads like a real picture-frame corner rather than a plain rounded box.
        Colour comes from --frame-accent, set per-theme in JS so it works for all 18 themes for free. */
-    #strip-card { --frame-accent: #c9974a; }
+    #strip-card { --frame-accent: #c9a04a; }
     #strip-card::before, #strip-card::after,
     #strip-card .corner-br-tl, #strip-card .corner-br-br { content: ''; position: absolute; width: 20px; height: 20px; z-index: 15; pointer-events: none; opacity: 0.85; }
     #strip-card::before { top: 7px; left: 7px; border-top: 3px solid var(--frame-accent); border-left: 3px solid var(--frame-accent); border-radius: 4px 0 0 0; }
@@ -757,8 +751,8 @@
     .fav-star-badge { position: absolute; top: 6px; right: 6px; z-index: 30; width: 26px; height: 26px; border-radius: 9999px; background: linear-gradient(135deg, var(--crimson-soft), var(--marquee)); display: flex; align-items: center; justify-content: center; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
 
     /* Retake button on each captured photo */
-    .retake-btn { position: absolute; top: 6px; left: 6px; z-index: 30; width: 30px; height: 30px; border-radius: 9999px; background: rgba(8,9,13,0.75); color: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid rgba(216,176,118,0.4); transition: transform .15s ease, background .15s ease; }
-    .retake-btn:hover { background: rgba(8,9,13,0.95); transform: scale(1.1); color: var(--brass); }
+    .retake-btn { position: absolute; top: 6px; left: 6px; z-index: 30; width: 30px; height: 30px; border-radius: 9999px; background: rgba(20,22,15,0.75); color: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 1px solid rgba(194,172,124,0.4); transition: transform .15s ease, background .15s ease; }
+    .retake-btn:hover { background: rgba(20,22,15,0.95); transform: scale(1.1); color: var(--brass); }
 
     /* Iris / shutter close effect */
     @keyframes irisClose {
@@ -792,14 +786,14 @@
 
     /* Tilt card */
     #machine-card { transition: transform .15s ease-out; will-change: transform; }
-    #mode-raw-btn, #mode-framed-btn, #mode-ig-btn { color: #a99878; }
-    #mode-raw-btn.mode-active, #mode-framed-btn.mode-active, #mode-ig-btn.mode-active { background: var(--brass); color: #0b0c10; }
-    #ig-category-tabs button { color: #8a7a63; }
-    #ig-category-tabs button.mode-active { background: var(--brass); color: #241705; }
+    #mode-raw-btn, #mode-framed-btn, #mode-ig-btn { color: #8f8163; }
+    #mode-raw-btn.mode-active, #mode-framed-btn.mode-active, #mode-ig-btn.mode-active { background: var(--brass); color: #22261c; }
+    #ig-category-tabs button { color: #6b6152; }
+    #ig-category-tabs button.mode-active { background: var(--brass); color: #22261c; }
 
     /* IG modal: consistent card grouping for a cleaner, more professional layout */
     .ig-panel {
-      background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent 45%), rgba(28, 21, 13, 0.55);
+      background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent 45%), rgba(38, 40, 30, 0.55);
       border: 1px solid var(--line);
       border-radius: 1rem;
       padding: 1.1rem 1.15rem;
@@ -833,12 +827,12 @@
     .ig-chip.selected .ig-chip-check {
       background: var(--brass);
       border-color: var(--brass);
-      color: #1c1206;
+      color: #22261c;
     }
     .ig-chip.selected {
       border-color: var(--brass) !important;
-      background: #2c2114 !important;
-      color: #f3e6c8 !important;
+      background: var(--brass-soft) !important;
+      color: #fff !important;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -849,15 +843,15 @@
     /* ---------- Welcome / layout-select kiosk screen ---------- */
     #welcome-screen {
       background:
-        radial-gradient(ellipse at 30% 10%, rgba(201,151,74,0.16), transparent 50%),
-        radial-gradient(ellipse at 80% 90%, rgba(156,47,47,0.14), transparent 50%),
-        #0e0a07;
+        radial-gradient(ellipse at 30% 10%, rgba(185,160,110,0.16), transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(168,101,74,0.14), transparent 50%),
+        #1a1c15;
     }
     @keyframes marqueeGlow { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
     .marquee-word span { display: inline-block; animation: marqueeGlow 2.2s ease-in-out infinite; }
     .layout-card { transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
     .layout-card:hover { transform: translateY(-3px); }
-    .layout-card.layout-active { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(201,151,74,0.18); }
+    .layout-card.layout-active { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(185,160,110,0.18); }
 
     /* ---------- Sticker tray + placed stickers on live preview ---------- */
     .sticker-tray-btn { transition: transform .12s ease; }
@@ -896,7 +890,7 @@
       border-radius: 18px; overflow: hidden; cursor: pointer; touch-action: none;
       border: 2px solid var(--line); box-shadow: 0 14px 30px -12px rgba(0,0,0,0.7);
       transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-      background: #120d08;
+      background: #1e2018;
     }
     .battle-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none; }
     .battle-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--brass); }
@@ -904,7 +898,7 @@
     .battle-card .battle-pick-btn {
       position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 8px 12px;
       background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));
-      color: #f2e8d4; font-weight: 700; font-size: 12px; text-align: center;
+      color: #f3e6c7; font-weight: 700; font-size: 12px; text-align: center;
       display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .battle-card .battle-like-stamp, .battle-card .battle-nope-stamp {
@@ -916,8 +910,8 @@
     .battle-card .battle-nope-stamp { right: 12px; color: #f87171; border-color: #f87171; transform: rotate(14deg); }
     .battle-vs {
       flex-shrink: 0; width: 34px; height: 34px; border-radius: 999px; display: flex; align-items: center;
-      justify-content: center; font-size: 11px; font-weight: 900; color: var(--brass-soft);
-      background: #1c150d; border: 1px solid var(--line);
+      justify-content: center; font-size: 11px; font-weight: 900; color: #f3e6c7;
+      background: #262819; border: 1px solid rgba(255,255,255,0.12);
     }
     @keyframes battleWinnerPulse { 0% { box-shadow: 0 0 0 0 rgba(52,211,153,0.55); } 100% { box-shadow: 0 0 0 16px rgba(52,211,153,0); } }
     .battle-card.battle-winner { border-color: #34d399; animation: battleWinnerPulse .6s ease-out; }
@@ -961,7 +955,7 @@
     .photo-skeleton { position: relative; overflow: hidden; }
     .photo-skeleton::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(100deg, transparent 30%, rgba(201,151,74,0.16) 50%, transparent 70%);
+      background: linear-gradient(100deg, transparent 30%, rgba(185,160,110,0.16) 50%, transparent 70%);
       background-size: 200% 100%;
       animation: skeletonShimmer 2.1s ease-in-out infinite;
     }
@@ -980,13 +974,13 @@
     /* Primary CTA glow-lift on hover (brass buttons + gradient IG/CTA buttons) */
     .btn-brass:hover,
     .ripple-btn.bg-gradient-to-r:hover {
-      box-shadow: 0 8px 24px -8px rgba(201,151,74,0.5), 0 2px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 24px -8px rgba(185,160,110,0.5), 0 2px 10px rgba(0,0,0,0.3);
       transform: translateY(-1.5px);
     }
 
     /* ---- Auth inputs: subtle lift + glow on focus instead of a flat ring ---- */
     #auth-form input { transition: transform 0.22s var(--ease-smooth), box-shadow 0.22s var(--ease-smooth), border-color 0.22s ease; }
-    #auth-form input:focus { transform: translateY(-1px); box-shadow: 0 5px 18px -7px rgba(201,151,74,0.4); }
+    #auth-form input:focus { transform: translateY(-1px); box-shadow: 0 5px 18px -7px rgba(185,160,110,0.4); }
 
     /* ---- Auth login/register tab pill: smoother active swap ---- */
     #auth-tab-login, #auth-tab-register { transition: color 0.25s var(--ease-smooth), background-color 0.25s var(--ease-smooth), box-shadow 0.25s var(--ease-smooth); }
@@ -1020,3 +1014,41 @@
         transition: none !important; transform: none !important; filter: none !important;
       }
     }
+
+    /* ======================================================================
+       CALMER LIGHTS — decorative "marquee bulb" blinking/breathing effects
+       turned off across the whole app. Loading and status indicators are
+       intentionally left animating (skeleton shimmer, progress bar, film
+       reel spinner, the green "ready" dot) since those communicate real
+       state, not just ambience.
+       ====================================================================== */
+
+    /* Marquee bulb strips (top/bottom of camera, welcome, landing, auth screens —
+       up to ~70 dots were chasing/pulsing at once). Now a steady, dim, non-blinking
+       row instead of being removed outright, so the vintage marquee trim still reads
+       as a design detail without constant motion. */
+    .bulb, .bulb-fast .bulb {
+      animation: none !important;
+      background-color: var(--brass-dim) !important;
+      box-shadow: 0 0 2px rgba(0,0,0,0.5) !important;
+    }
+
+    /* Splash-screen bulb ring: same treatment, steady instead of chasing. */
+    .splash-bulb { animation: none !important; background: var(--brass-dim) !important; box-shadow: none !important; }
+
+    /* Auth screen tagline neon dots: solid, no flicker. */
+    .neon-dot { animation: none !important; opacity: 1; }
+
+    /* CTA button glow: soft and constant instead of breathing in/out. */
+    .cta-glow { animation: none !important; opacity: 0.4; transform: scale(1); }
+
+    /* Panel "brushed metal" sheen sweep: keep the static brushed texture, drop the
+       traveling highlight that crossed every card on a loop. */
+    .panel-machine { animation: none !important; }
+
+    /* "Disarankan hari ini" seasonal badge: no more scale-pulsing. */
+    .seasonal-badge { animation: none !important; }
+
+    /* Camera error / permission-denied panel: gentle fade+rise on appear, matches
+       the modal entrance treatment elsewhere so it doesn't just snap into view. */
+    #camera-error.flex { animation: dialogPanelIn 0.32s var(--ease-smooth) both; }
