@@ -364,8 +364,6 @@ const video = document.getElementById('webcam');
         container.appendChild(dot);
       }
     }
-    generateBulbs(document.getElementById('bulbs-top'), 8);
-    generateBulbs(document.getElementById('bulbs-bottom'), 8);
     generateBulbs(document.getElementById('welcome-bulbs-top'), 10);
     generateBulbs(document.getElementById('welcome-bulbs-bottom'), 10);
     generateBulbs(document.getElementById('landing-bulbs-top'), 10);
@@ -376,7 +374,7 @@ const video = document.getElementById('webcam');
     updateFrameSummary();
     (function initFrameAccent() {
       const cfg = FRAME_THEMES[currentFrame] || FRAME_THEMES.nature;
-      stripCard.style.setProperty('--frame-accent', cfg.accent || '#c9974a');
+      stripCard.style.setProperty('--frame-accent', cfg.accent || '#c9a04a');
       enableTilt(stripCard);
       const stamp = document.getElementById('frame-stamp-ui');
       if (stamp) {
@@ -594,7 +592,7 @@ const video = document.getElementById('webcam');
     function showToast(msg, icon) {
       icon = icon || '✅';
       const el = document.createElement('div');
-      el.className = 'pointer-events-auto flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1c150d]/95 border border-[#4a3a24] shadow-2xl text-sm font-semibold text-[#e9dcc3] toast-in';
+      el.className = 'pointer-events-auto flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#ffffff]/95 border border-[#6b5f45] shadow-2xl text-sm font-semibold text-[#241f16] toast-in';
       el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
       toastContainer.appendChild(el);
       setTimeout(() => {
@@ -606,7 +604,7 @@ const video = document.getElementById('webcam');
 
     function fireConfetti() {
       if (typeof confetti === 'function') {
-        confetti({ particleCount: 90, spread: 75, origin: { y: 0.7 }, colors: ['#c9974a', '#9c2f2f', '#ffc94d', '#f0d29a'] });
+        confetti({ particleCount: 90, spread: 75, origin: { y: 0.7 }, colors: ['#c9a04a', '#c96b4a', '#b8860b', '#f3e6c7'] });
       }
     }
 
@@ -924,9 +922,9 @@ const video = document.getElementById('webcam');
     }
 
     function highlightRecommendedExport(mode) {
-      [pngBtn, gridBtn].forEach(b => b && b.classList.remove('ring-2', 'ring-[var(--brass-soft)]', 'ring-offset-2', 'ring-offset-[#150f09]'));
+      [pngBtn, gridBtn].forEach(b => b && b.classList.remove('ring-2', 'ring-[var(--brass-soft)]', 'ring-offset-2', 'ring-offset-[#ffffff]'));
       const target = mode === 'grid' ? gridBtn : pngBtn;
-      if (target) target.classList.add('ring-2', 'ring-[var(--brass-soft)]', 'ring-offset-2', 'ring-offset-[#150f09]');
+      if (target) target.classList.add('ring-2', 'ring-[var(--brass-soft)]', 'ring-offset-2', 'ring-offset-[#ffffff]');
     }
 
     function showWelcomeScreen() {
@@ -1017,7 +1015,7 @@ const video = document.getElementById('webcam');
       tag.innerText = cfg.tagline;
 
       // Accent colour drives the corner brackets + photo mat ring for every theme.
-      stripCard.style.setProperty('--frame-accent', cfg.accent || '#c9974a');
+      stripCard.style.setProperty('--frame-accent', cfg.accent || '#c9a04a');
       const stamp = document.getElementById('frame-stamp-ui');
       if (stamp) {
         stamp.textContent = (cfg.stampText || cfg.label).toUpperCase();
@@ -1485,7 +1483,7 @@ const video = document.getElementById('webcam');
       PROP_STICKERS.forEach(emoji => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'sticker-tray-btn w-9 h-9 flex items-center justify-center rounded-lg bg-[#221a11] border border-[var(--line)] hover:border-[var(--brass)]/60 text-lg';
+        btn.className = 'sticker-tray-btn w-9 h-9 flex items-center justify-center rounded-lg bg-[#ffffff] border border-[var(--line)] hover:border-[var(--brass)]/60 text-lg';
         btn.innerText = emoji;
         btn.setAttribute('aria-label', `Tempel stiker ${emoji}`);
         btn.onclick = () => addSticker(emoji);
@@ -1559,7 +1557,7 @@ const video = document.getElementById('webcam');
       const ctx = canvas.getContext('2d');
 
       const isDarkThumb = DARK_FRAME_THEMES.has(currentFrame);
-      paintThemedBackground(ctx, isDarkThumb ? '#161009' : '#fbf8f2', cfg.accent || '#c9974a', W, H, isDarkThumb);
+      paintThemedBackground(ctx, isDarkThumb ? '#1c1e17' : '#f7f2e8', cfg.accent || '#c9a04a', W, H, isDarkThumb);
 
       drawPhotoMat(ctx, cfg.accent, isDarkThumb, pad, pad, photoW, photoH);
       ctx.save();
@@ -1571,7 +1569,7 @@ const video = document.getElementById('webcam');
       ctx.drawImage(img, sx, sy, sw, sh, pad, pad, photoW, photoH);
       ctx.restore();
 
-      ctx.strokeStyle = cfg.accent || '#d8b076';
+      ctx.strokeStyle = cfg.accent || '#c2ac7c';
       ctx.lineWidth = 8;
       ctx.strokeRect(pad, pad, photoW, photoH);
 
@@ -1583,12 +1581,12 @@ const video = document.getElementById('webcam');
       ctx.fillText(st[1] || '✨', pad + photoW + 6, pad + 34);
 
       ctx.textAlign = 'center';
-      ctx.fillStyle = isDarkThumb ? '#f3ead9' : '#221a11';
+      ctx.fillStyle = isDarkThumb ? '#241f16' : '#ffffff';
       ctx.font = "bold 40px 'Plus Jakarta Sans', sans-serif";
       ctx.fillText('JEPRETIN', W / 2, footerY);
 
       ctx.font = "20px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillStyle = isDarkThumb ? 'rgba(243,234,217,0.72)' : 'rgba(34,26,17,0.68)';
+      ctx.fillStyle = isDarkThumb ? 'rgba(237,227,208,0.72)' : 'rgba(26,28,20,0.68)';
       ctx.fillText(cfg.tagline || '', W / 2, footerY + 36);
 
       const dataUrl = canvas.toDataURL('image/png');
@@ -1635,7 +1633,7 @@ const video = document.getElementById('webcam');
         previewGrid.className = "flex flex-col items-center gap-3 max-w-md mx-auto";
 
         const wrap = document.createElement('div');
-        wrap.className = "relative w-full rounded-xl overflow-hidden shadow-2xl shadow-black/50 border border-[var(--line)] bg-[#1c150d] animate-pop torn-bottom tilt-card";
+        wrap.className = "relative w-full rounded-xl overflow-hidden shadow-2xl shadow-black/50 border border-[var(--line)] bg-[#ffffff] animate-pop torn-bottom tilt-card";
 
         const img = document.createElement('img');
         img.alt = `Strip foto ${capturedImages.length} pose dengan bingkai ${currentFrame}`;
@@ -1651,7 +1649,7 @@ const video = document.getElementById('webcam');
         enableTilt(wrap, 4);
 
         const hint = document.createElement('p');
-        hint.className = "text-[11px] text-[#8a7a63] text-center px-2";
+        hint.className = "text-[11px] text-[#6b6152] text-center px-2";
         hint.textContent = 'Ini persis file PNG Strip yang akan terunduh saat kamu tekan "Cetak Hasil Photobox".';
         previewGrid.appendChild(hint);
 
@@ -1678,7 +1676,7 @@ const video = document.getElementById('webcam');
         const isFav = favoriteIndex === idx;
 
         const card = document.createElement('div');
-        card.className = "relative rounded-xl overflow-hidden shadow-xl shadow-black/40 border border-[var(--line)] bg-[#1c150d] aspect-[3/4] animate-pop tilt-card";
+        card.className = "relative rounded-xl overflow-hidden shadow-xl shadow-black/40 border border-[var(--line)] bg-[#ffffff] aspect-[3/4] animate-pop tilt-card";
         card.style.animationDelay = (idx * 60) + 'ms';
 
         // Photo layer gets the torn edge (clip-path also clips children, so badges live
@@ -1695,7 +1693,7 @@ const video = document.getElementById('webcam');
         loading.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xl text-[var(--brass-soft)]"></i>';
 
         const numBadge = document.createElement('span');
-        numBadge.className = "absolute top-2 left-2 w-6 h-6 rounded-full bg-black/60 backdrop-blur text-[11px] font-bold text-[#e9dcc3] flex items-center justify-center";
+        numBadge.className = "absolute top-2 left-2 w-6 h-6 rounded-full bg-black/60 backdrop-blur text-[11px] font-bold text-[#241f16] flex items-center justify-center";
         numBadge.textContent = idx + 1;
 
         const favBtn = document.createElement('button');
@@ -1706,7 +1704,7 @@ const video = document.getElementById('webcam');
         favBtn.onclick = () => { selectFavorite(idx); renderPreviewGrid(); };
 
         const retakeBtn = document.createElement('button');
-        retakeBtn.className = "ripple-btn absolute bottom-2 right-2 px-2.5 py-1.5 rounded-full bg-black/60 backdrop-blur text-[10px] font-semibold text-[#d8c9ac] border border-[#8a7a63]/30 hover:border-[var(--brass-soft)] transition flex items-center gap-1.5";
+        retakeBtn.className = "ripple-btn absolute bottom-2 right-2 px-2.5 py-1.5 rounded-full bg-black/60 backdrop-blur text-[10px] font-semibold text-[#241f16] border border-[#6b6152]/30 hover:border-[var(--brass-soft)] transition flex items-center gap-1.5";
         retakeBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i><span>Ulang</span>';
         retakeBtn.onclick = () => retakeFromGrid(idx);
 
@@ -1756,10 +1754,10 @@ const video = document.getElementById('webcam');
       statusBadge.textContent = `${count}/${POSE_COUNT} FOTO`;
 
       if (count === 0) {
-        statusBadge.className = "font-tech text-[10px] px-2.5 py-1 rounded-full bg-[#221a11] text-[#a99878] border border-[var(--line)] transition-all duration-300 badge-pop";
-        outputLed.className = "w-2.5 h-2.5 rounded-full bg-[#4a3b25] transition-colors duration-300";
+        statusBadge.className = "font-tech text-[10px] px-2.5 py-1 rounded-full bg-[#ffffff] text-[#8f8163] border border-[var(--line)] transition-all duration-300 badge-pop";
+        outputLed.className = "w-2.5 h-2.5 rounded-full bg-[#6b5f45] transition-colors duration-300";
         readyRibbon.textContent = `Ambil ${POSE_COUNT} foto untuk mulai mencetak`;
-        readyRibbon.className = "mt-4 text-center text-xs font-bold uppercase tracking-wider text-[#6b5c45] transition-all duration-500";
+        readyRibbon.className = "mt-4 text-center text-xs font-bold uppercase tracking-wider text-[#6b6152] transition-all duration-500";
       } else if (count < POSE_COUNT) {
         statusBadge.className = "font-tech text-[10px] px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 transition-all duration-300 badge-pop";
         outputLed.className = "w-2.5 h-2.5 rounded-full bg-amber-400 transition-colors duration-300";
@@ -1806,7 +1804,7 @@ const video = document.getElementById('webcam');
       Object.keys(framedCache).forEach(k => delete framedCache[k]);
       refreshLiveFramedPreview(); // re-render the same frame design, now with empty slots
       qrPanel.classList.add('hidden');
-      [pngBtn, gridBtn].forEach(b => b && b.classList.remove('ring-2', 'ring-[var(--brass-soft)]', 'ring-offset-2', 'ring-offset-[#150f09]'));
+      [pngBtn, gridBtn].forEach(b => b && b.classList.remove('ring-2', 'ring-[var(--brass-soft)]', 'ring-offset-2', 'ring-offset-[#ffffff]'));
       gifBtn.disabled = true;
       pngBtn.disabled = true;
       igBtn.disabled = true;
@@ -1880,10 +1878,10 @@ const video = document.getElementById('webcam');
 
         qrCodeBox.innerHTML = '';
         if (thumb.length <= 2600) {
-          new QRCode(qrCodeBox, { text: thumb, width: 108, height: 108, colorDark: '#1c1206', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.L });
+          new QRCode(qrCodeBox, { text: thumb, width: 108, height: 108, colorDark: '#22261c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.L });
           qrPanelNote.textContent = 'Pratinjau resolusi rendah. File resolusi penuh sudah otomatis terunduh ke perangkatmu.';
         } else {
-          qrCodeBox.innerHTML = '<div class="w-[108px] h-[108px] flex items-center justify-center text-center text-[10px] text-[#8a7a63] px-2 leading-snug">QR tak muat untuk foto ini</div>';
+          qrCodeBox.innerHTML = '<div class="w-[108px] h-[108px] flex items-center justify-center text-center text-[10px] text-[#6b6152] px-2 leading-snug">QR tak muat untuk foto ini</div>';
           qrPanelNote.textContent = 'Ukuran foto terlalu besar untuk kode QR. File resolusi penuh sudah otomatis terunduh ke perangkatmu.';
         }
         qrPanel.classList.remove('hidden');
@@ -2495,11 +2493,11 @@ const video = document.getElementById('webcam');
          per theme for a light personality touch in the side margins. */
 
       const isDark = DARK_FRAME_THEMES.has(currentFrame);
-      const paper = isDark ? '#161009' : '#fbf8f2';
-      const ink = isDark ? '#f3ead9' : '#221a11';
-      const inkMuted = isDark ? 'rgba(243,234,217,0.62)' : 'rgba(34,26,17,0.58)';
-      const inkFaint = isDark ? 'rgba(243,234,217,0.34)' : 'rgba(34,26,17,0.32)';
-      const accent = cfg.accent || '#c9974a';
+      const paper = isDark ? '#1c1e17' : '#f7f2e8';
+      const ink = isDark ? '#241f16' : '#ffffff';
+      const inkMuted = isDark ? 'rgba(237,227,208,0.62)' : 'rgba(26,28,20,0.58)';
+      const inkFaint = isDark ? 'rgba(237,227,208,0.34)' : 'rgba(26,28,20,0.32)';
+      const accent = cfg.accent || '#c9a04a';
 
       // Living, theme-tinted backdrop behind the whole strip — the photos
       // read as mounted ON this backdrop rather than sitting on a flat
@@ -2650,7 +2648,7 @@ const video = document.getElementById('webcam');
       ctx.shadowColor = 'rgba(0,0,0,0.38)';
       ctx.shadowBlur = 26;
       ctx.shadowOffsetY = 10;
-      ctx.fillStyle = isDark ? '#0d0a06' : '#ffffff';
+      ctx.fillStyle = isDark ? '#14160f' : '#ffffff';
       roundRectPath(ctx, x - m, y - m, w + m * 2, h + m * 2, 14);
       ctx.fill();
       ctx.restore();
@@ -2667,7 +2665,7 @@ const video = document.getElementById('webcam');
     /* Simple hex(+alpha) helper so theme accent colours can be washed/screened
        without maintaining a second rgba per theme. */
     function hexToRgba(hex, alpha) {
-      const h = (hex || '#c9974a').replace('#', '');
+      const h = (hex || '#c9a04a').replace('#', '');
       const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
       const r = parseInt(full.substring(0, 2), 16) || 0;
       const g = parseInt(full.substring(2, 4), 16) || 0;
@@ -2750,14 +2748,14 @@ const video = document.getElementById('webcam');
       roundRectPath(ctx, x + 16, y + 16, w - 32, h - 32, 8);
       ctx.setLineDash([12, 9]);
       ctx.lineWidth = 3;
-      ctx.strokeStyle = hexToRgba(cfg.accent || '#c9974a', 0.5);
+      ctx.strokeStyle = hexToRgba(cfg.accent || '#c9a04a', 0.5);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.restore();
 
       const cx = x + w / 2, cy = y + h / 2 - 18;
       ctx.save();
-      ctx.strokeStyle = hexToRgba(cfg.accent || '#c9974a', 0.55);
+      ctx.strokeStyle = hexToRgba(cfg.accent || '#c9a04a', 0.55);
       ctx.lineWidth = 4;
       ctx.lineJoin = 'round';
       const bw = 84, bh = 58;
@@ -2882,7 +2880,7 @@ const video = document.getElementById('webcam');
 
       const cfg = FRAME_THEMES[currentFrame] || FRAME_THEMES.nature;
       const isDarkGrid = DARK_FRAME_THEMES.has(currentFrame);
-      paintThemedBackground(exportCtx, isDarkGrid ? '#161009' : '#fbf8f2', cfg.accent || '#c9974a', W, H, isDarkGrid);
+      paintThemedBackground(exportCtx, isDarkGrid ? '#1c1e17' : '#f7f2e8', cfg.accent || '#c9a04a', W, H, isDarkGrid);
 
       let loaded = 0;
       capturedImages.forEach((src, idx) => {
@@ -2904,7 +2902,7 @@ const video = document.getElementById('webcam');
           exportCtx.filter = filterCanvasMap[currentFilter] || 'none';
           exportCtx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, cell, cell);
           exportCtx.restore();
-          exportCtx.strokeStyle = cfg.accent || '#d8b076';
+          exportCtx.strokeStyle = cfg.accent || '#c2ac7c';
           exportCtx.lineWidth = 6;
           exportCtx.strokeRect(destX, destY, cell, cell);
 
@@ -2914,11 +2912,11 @@ const video = document.getElementById('webcam');
 
             const footerY = pad + rows * cell + (rows - 1) * gap + 80;
             exportCtx.textAlign = 'center';
-            exportCtx.fillStyle = isDarkGrid ? '#f3ead9' : '#221a11';
+            exportCtx.fillStyle = isDarkGrid ? '#241f16' : '#ffffff';
             exportCtx.font = "bold 54px 'Plus Jakarta Sans', sans-serif";
             exportCtx.fillText('JEPRETIN', W / 2, footerY);
             exportCtx.font = "20px 'Fira Code', monospace";
-            exportCtx.fillStyle = isDarkGrid ? 'rgba(243,234,217,0.6)' : 'rgba(34,26,17,0.55)';
+            exportCtx.fillStyle = isDarkGrid ? 'rgba(237,227,208,0.6)' : 'rgba(26,28,20,0.55)';
             const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
             exportCtx.fillText(`#${sessionCode || '—'} · ${timeStr}`, W / 2, footerY + 46);
 
@@ -3177,7 +3175,7 @@ const video = document.getElementById('webcam');
       const H = MARGIN + PHOTO + CAPTION_H;
       canvas.width = W; canvas.height = H;
 
-      ctx.fillStyle = '#faf6ef';
+      ctx.fillStyle = '#f7f2e8';
       ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = '#0000';
 
@@ -3200,12 +3198,12 @@ const video = document.getElementById('webcam');
       ctx.textAlign = 'center';
 
       ctx.font = "bold 26px 'Pacifico', cursive";
-      ctx.fillStyle = '#c9974a';
+      ctx.fillStyle = '#c9a04a';
       ctx.fillText(IG_DISPLAY_NAME, W / 2, H - 42);
 
       const dateStr = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
       ctx.font = "22px 'Plus Jakarta Sans', sans-serif";
-      ctx.fillStyle = '#8a7a63';
+      ctx.fillStyle = '#6b6152';
       ctx.fillText(dateStr, W / 2, MARGIN + PHOTO + 46);
 
       return canvas.toDataURL('image/png');
@@ -3311,9 +3309,9 @@ const video = document.getElementById('webcam');
         const btn = document.createElement('button');
         btn.dataset.igstyle = id;
         btn.onclick = () => selectIGStyle(id);
-        btn.className = 'p-3 rounded-xl border-2 transition text-left flex flex-col gap-1 bg-[#221a11] border-[var(--line)] hover:border-[var(--crimson-soft)]/50 card-rise-in' + (id === currentIGStyle ? ' active-choice' : '');
+        btn.className = 'p-3 rounded-xl border-2 transition text-left flex flex-col gap-1 bg-[#ffffff] border-[var(--line)] hover:border-[var(--crimson-soft)]/50 card-rise-in' + (id === currentIGStyle ? ' active-choice' : '');
         btn.style.setProperty('--i', idx);
-        btn.innerHTML = `<span class="flex items-center gap-2 text-sm font-bold text-[#e9dcc3]"><i class="${cfg.icon} text-[var(--crimson-soft)]"></i>${cfg.label}</span><span class="text-[10px] text-[#8a7a63] leading-snug">${cfg.desc}</span>`;
+        btn.innerHTML = `<span class="flex items-center gap-2 text-sm font-bold text-[#241f16]"><i class="${cfg.icon} text-[var(--crimson-soft)]"></i>${cfg.label}</span><span class="text-[10px] text-[#6b6152] leading-snug">${cfg.desc}</span>`;
         igStyleBtns.appendChild(btn);
         attachRipple(btn);
       });
@@ -3354,7 +3352,7 @@ const video = document.getElementById('webcam');
       preset.captions.forEach(text => {
         const chip = document.createElement('button');
         chip.dataset.captionText = text;
-        chip.className = 'ig-chip px-3.5 py-2.5 rounded-xl bg-[#221a11] border border-[var(--line)] hover:border-[var(--brass)]/50 text-[13px] leading-snug text-[#d8c9ac] transition ripple-btn' + (text === current ? ' selected' : '');
+        chip.className = 'ig-chip px-3.5 py-2.5 rounded-xl bg-[#ffffff] border border-[var(--line)] hover:border-[var(--brass)]/50 text-[13px] leading-snug text-[#241f16] transition ripple-btn' + (text === current ? ' selected' : '');
         chip.innerHTML = `<span class="ig-chip-check"><i class="fa-solid fa-check text-[9px]"></i></span><span class="pt-px">${text}</span>`;
         chip.onclick = () => applyIGCaption(text);
         igCaptionChips.appendChild(chip);
@@ -3519,7 +3517,7 @@ const video = document.getElementById('webcam');
         ctx.filter = filterCanvasMap[currentFilter] || 'none';
         ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, cell, cell);
         ctx.restore();
-        ctx.strokeStyle = cfg.accent || '#d8b076';
+        ctx.strokeStyle = cfg.accent || '#c2ac7c';
         ctx.lineWidth = 6;
         ctx.strokeRect(destX, destY, cell, cell);
       });
