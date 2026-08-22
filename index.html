@@ -384,7 +384,7 @@
         <video id="webcam" autoplay playsinline class="w-full h-full object-cover transform -scale-x-100 filter-normal transition-all duration-300"></video>
 
         <!-- Small "LIVE" chip shown while auto-crop (auto-center on person) is active -->
-        <div id="auto-crop-live-chip" class="hidden absolute top-3 left-3 z-30 items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur text-[10px] font-tech text-sky-300 border border-sky-500/30">
+        <div id="auto-crop-live-chip" class="hidden absolute top-3 left-3 z-30 items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 text-[10px] font-tech text-sky-300 border border-sky-500/30">
           <i class="fa-solid fa-crosshairs"></i><span>AUTO-CROP</span>
         </div>
 
@@ -398,11 +398,11 @@
         <div class="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-[var(--brass)]/60 rounded-bl-lg pointer-events-none z-20"></div>
         <div class="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-[var(--brass)]/60 rounded-br-lg pointer-events-none z-20"></div>
 
-        <div class="absolute top-3 right-11 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur text-[10px] font-tech text-red-400 border border-red-500/25">
+        <div class="absolute top-3 right-11 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 text-[10px] font-tech text-red-400 border border-red-500/25">
           <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>REC
         </div>
 
-        <button id="camera-switch-btn" onclick="switchCamera()" aria-label="Ganti kamera" title="Ganti kamera depan/belakang" class="hidden absolute bottom-3 right-3 z-30 w-11 h-11 items-center justify-center rounded-full bg-black/55 backdrop-blur text-[#d8c9ac] border border-[var(--line)] hover:border-[var(--brass)]/60 hover:text-[var(--brass-soft)] transition">
+        <button id="camera-switch-btn" onclick="switchCamera()" aria-label="Ganti kamera" title="Ganti kamera depan/belakang" class="hidden absolute bottom-3 right-3 z-30 w-11 h-11 items-center justify-center rounded-full bg-black/70 text-[#d8c9ac] border border-[var(--line)] hover:border-[var(--brass)]/60 hover:text-[var(--brass-soft)] transition">
           <i class="fa-solid fa-camera-rotate text-sm"></i>
         </button>
 
@@ -419,7 +419,7 @@
           </button>
         </div>
 
-        <div id="countdown" class="absolute inset-0 bg-[var(--ink)]/75 hidden flex-col items-center justify-center backdrop-blur-md z-40" aria-live="assertive">
+        <div id="countdown" class="absolute inset-0 bg-[var(--ink)]/90 hidden flex-col items-center justify-center z-40" aria-live="assertive">
           <div id="countdown-prompt" class="mb-3 px-4 py-1.5 rounded-full bg-black/40 border border-[var(--brass)]/40 text-sm sm:text-base font-bold text-[var(--brass-soft)] text-center max-w-[85%] pose-prompt-pop"></div>
           <div class="relative flex items-center justify-center">
             <div class="absolute w-40 h-40 rounded-full opacity-35 blur-lg" style="background:conic-gradient(from 0deg, var(--brass), var(--crimson-soft), var(--marquee), var(--brass)); animation: ringRotate 2s linear infinite;"></div>
@@ -709,7 +709,7 @@
   <canvas id="export-canvas" class="hidden"></canvas>
 
   <!-- Photo Battle Modal: Tinder-style "which is better" vote before the strip is finalized -->
-  <div id="battle-modal" class="hidden fixed inset-0 z-[68] bg-[var(--ink)]/97 backdrop-blur-md flex-col" role="dialog" aria-modal="true" aria-label="Photo Battle — pilih foto terbaik">
+  <div id="battle-modal" class="hidden fixed inset-0 z-[68] bg-[var(--ink)]/97 flex-col" role="dialog" aria-modal="true" aria-label="Photo Battle — pilih foto terbaik">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#e9dcc3] flex items-center gap-2"><i class="fa-solid fa-fire text-[var(--crimson-soft)]"></i> Photo Battle</h2>
@@ -731,7 +731,7 @@
   </div>
 
   <!-- Preview Modal: review all photos before downloading -->
-  <div id="preview-modal" class="hidden fixed inset-0 z-[60] bg-[var(--ink)]/96 backdrop-blur-md flex-col" role="dialog" aria-modal="true" aria-label="Pratinjau semua foto">
+  <div id="preview-modal" class="hidden fixed inset-0 z-[60] bg-[var(--ink)]/96 flex-col" role="dialog" aria-modal="true" aria-label="Pratinjau semua foto">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#e9dcc3]">Pratinjau Hasil Foto</h2>
@@ -771,7 +771,7 @@
   </div>
 
   <!-- Frame Modal: dedicated screen for picking the print/photobox frame theme -->
-  <div id="frame-modal" class="hidden fixed inset-0 z-[65] bg-[var(--ink)]/96 backdrop-blur-md flex-col" role="dialog" aria-modal="true" aria-label="Pilih tema bingkai">
+  <div id="frame-modal" class="hidden fixed inset-0 z-[65] bg-[var(--ink)]/96 flex-col" role="dialog" aria-modal="true" aria-label="Pilih tema bingkai">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#e9dcc3]">Pilih Tema Bingkai</h2>
@@ -787,7 +787,7 @@
   </div>
 
   <!-- IG Modal: dedicated screen for picking IG post frame style + relationship caption -->
-  <div id="ig-modal" class="hidden fixed inset-0 z-[65] bg-[var(--ink)]/96 backdrop-blur-md flex-col" role="dialog" aria-modal="true" aria-label="Bingkai IG Post">
+  <div id="ig-modal" class="hidden fixed inset-0 z-[65] bg-[var(--ink)]/96 flex-col" role="dialog" aria-modal="true" aria-label="Bingkai IG Post">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#e9dcc3]">Bingkai IG Post</h2>
@@ -858,7 +858,7 @@
   </div>
 
   <!-- History Modal: riwayat foto milik user yang sedang login (tersimpan di localStorage) -->
-  <div id="history-modal" class="hidden fixed inset-0 z-[65] bg-[var(--ink)]/96 backdrop-blur-md flex-col" role="dialog" aria-modal="true" aria-label="Riwayat foto">
+  <div id="history-modal" class="hidden fixed inset-0 z-[65] bg-[var(--ink)]/96 flex-col" role="dialog" aria-modal="true" aria-label="Riwayat foto">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#e9dcc3]">Riwayat Foto</h2>
