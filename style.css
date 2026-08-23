@@ -21,6 +21,13 @@
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
     }
+    html {
+      /* Reserve scrollbar gutter space on BOTH edges consistently, so the
+         page doesn't shift off-center when a scrollbar appears/disappears
+         or when the browser/WebView only reserves scrollbar space on the
+         right side. This is what causes uneven left/right margins. */
+      scrollbar-gutter: stable both-edges;
+    }
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     body {
       /* Adds on top of the existing p-4/sm:p-6 padding so content clears the notch /
@@ -202,6 +209,22 @@
     .splash-text-in { animation: splashTextIn 0.6s ease-out forwards; opacity: 0; }
     #splash-progress-bar { transition: width 0.25s ease-out; }
 
+    /* ---- Wordmark cascades in letter by letter instead of as one block,
+       each glyph settling with a soft blur-focus pull like a lens racking
+       into focus — a small premium touch on the brand reveal. ---- */
+    .splash-wordmark span {
+      display: inline-block;
+      opacity: 0;
+      animation: splashLetterIn 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes splashLetterIn {
+      0% { transform: translateY(10px) scale(0.85); opacity: 0; filter: blur(6px); }
+      100% { transform: translateY(0) scale(1); opacity: 1; filter: blur(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .splash-wordmark span { animation: none; opacity: 1; filter: none; }
+    }
+
     /* ---- Camera-shutter iris: covers the screen on load, then irises open
        like a lens aperture to reveal the splash underneath. ---- */
     #shutter-iris {
@@ -218,6 +241,45 @@
     }
     @media (prefers-reduced-motion: reduce) {
       #shutter-iris { animation: none; opacity: 0; }
+    }
+
+    /* ---- Flashbulb whiteout: fires right as the iris starts opening, like the
+       shutter actually clicking, before settling into the splash content. ---- */
+    #shutter-flash {
+      position: fixed; inset: 0; z-index: 111; pointer-events: none;
+      background: radial-gradient(circle at 50% 42%, #fffefa, #f3ecdc 70%);
+      opacity: 0;
+      animation: shutterFlashPop 0.6s ease-out forwards;
+      animation-delay: 0.06s;
+    }
+    @keyframes shutterFlashPop {
+      0% { opacity: 0; }
+      18% { opacity: 0.96; }
+      100% { opacity: 0; }
+    }
+    #shutter-flash.shutter-flash-repeat {
+      animation: shutterFlashPop 0.5s ease-out 0.08s forwards;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #shutter-flash { animation: none; opacity: 0; }
+    }
+
+    /* ---- Thin aperture-blade ring: a dashed ring around the logo that keeps
+       a slow independent rotation, reading as mechanical iris blades rather
+       than a plain decorative glow. ---- */
+    .splash-aperture-ring {
+      border: 1.5px dashed rgba(201,160,74,0.4);
+      animation: apertureRingSpin 7s linear infinite;
+    }
+    .splash-aperture-ring::before {
+      content: "";
+      position: absolute; inset: 5px;
+      border-radius: 9999px;
+      border: 1px dotted rgba(201,160,74,0.28);
+    }
+    @keyframes apertureRingSpin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .splash-aperture-ring { animation: none; }
     }
 
     /* ---- Flash-bulb pop behind the logo, timed to the shutter opening ---- */
@@ -277,9 +339,25 @@
     .splash-filmstrip::after { bottom: -4px; }
     #splash-progress-bar {
       transition: width 0.25s ease-out;
+      position: relative;
+      overflow: hidden;
       background-image:
         repeating-linear-gradient(90deg, rgba(0,0,0,0.18) 0 1px, transparent 1px 9px),
         linear-gradient(90deg, var(--brass-soft), var(--brass));
+    }
+    #splash-progress-bar::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,0.75) 46%, transparent 72%);
+      transform: translateX(-100%);
+      animation: progressGlintSweep 1.3s ease-in-out infinite;
+    }
+    @keyframes progressGlintSweep {
+      0% { transform: translateX(-100%); }
+      60%, 100% { transform: translateX(100%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #splash-progress-bar::after { animation: none; opacity: 0; }
     }
 
     /* ---- Film grain: a subtly animated noise texture over the whole splash for that
