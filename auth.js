@@ -401,6 +401,9 @@
           <p class="text-[9px] text-[#d6c6a0]">${timeAgoLabel(item.ts)}</p>
         </div>
         <div class="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition">
+          <button onclick="JepretinAuth.openMockupModal('${item.id}')" title="Lihat POV" class="w-7 h-7 flex items-center justify-center rounded-full bg-black/60 text-[#241f16] hover:text-[var(--brass-soft)]">
+            <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i>
+          </button>
           <a href="${item.thumb}" download="${item.filename || 'jepretin.jpg'}" title="Unduh" class="w-7 h-7 flex items-center justify-center rounded-full bg-black/60 text-[#241f16] hover:text-[var(--brass-soft)]">
             <i class="fa-solid fa-download text-[11px]"></i>
           </a>
@@ -410,6 +413,197 @@
         </div>`;
       grid.appendChild(card);
     });
+  }
+
+  /* ---------------- mockup POV (dipegang tangan / saku celana / latar aesthetic) ---------------- */
+  let mockupItem = null;
+  let mockupImgObj = null;
+  let mockupStyle = 'hand';
+
+  function openMockupModal(id) {
+    const item = getMyHistory().find((i) => i.id === id);
+    if (!item) return;
+    mockupItem = item;
+    mockupStyle = 'hand';
+    updateMockupTabsUI();
+    const modal = $('mockup-modal');
+    if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+    const img = new Image();
+    img.onload = () => { mockupImgObj = img; renderMockupCanvas(); };
+    img.src = item.thumb;
+  }
+
+  function closeMockupModal() {
+    const modal = $('mockup-modal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function setMockupStyle(style) {
+    mockupStyle = style;
+    updateMockupTabsUI();
+    renderMockupCanvas();
+  }
+
+  function updateMockupTabsUI() {
+    document.querySelectorAll('.mockup-tab-btn').forEach((btn) => {
+      btn.classList.toggle('mockup-tab-active', btn.dataset.style === mockupStyle);
+    });
+  }
+
+  function downloadMockupResult() {
+    const canvas = $('mockup-canvas');
+    if (!canvas || !mockupItem) return;
+    const label = mockupStyle === 'hand' ? 'tangan' : mockupStyle === 'pocket' ? 'saku' : 'aesthetic';
+    const a = document.createElement('a');
+    a.download = `jepretin-pov-${label}-${Date.now()}.png`;
+    a.href = canvas.toDataURL('image/png', 0.95);
+    a.click();
+  }
+
+  function roundRectPath(ctx, x, y, w, h, r) {
+    if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
+    ctx.beginPath();
+    ctx.moveTo(x + r.tl, y);
+    ctx.lineTo(x + w - r.tr, y);
+    ctx.arcTo(x + w, y, x + w, y + r.tr, r.tr);
+    ctx.lineTo(x + w, y + h - r.br);
+    ctx.arcTo(x + w, y + h, x + w - r.br, y + h, r.br);
+    ctx.lineTo(x + r.bl, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r.bl, r.bl);
+    ctx.lineTo(x, y + r.tl);
+    ctx.arcTo(x, y, x + r.tl, y, r.tl);
+    ctx.closePath();
+  }
+
+  // Menggambar strip foto (dengan bingkai kertas putih tipis + bayangan) yang pas
+  // di dalam kotak maksimal maxW x maxH, dirotasi sejumlah `rotation` radian.
+  function drawStripImage(ctx, img, cx, cy, maxW, maxH, rotation, opts) {
+    const ratio = img.height / img.width;
+    let w = maxW, h = w * ratio;
+    if (h > maxH) { h = maxH; w = h / ratio; }
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+    if (opts && opts.shadow) {
+      ctx.shadowColor = opts.shadowColor || 'rgba(20,15,5,0.45)';
+      ctx.shadowBlur = opts.shadowBlur || 32;
+      ctx.shadowOffsetY = opts.shadowOffsetY || 18;
+    }
+    ctx.fillStyle = '#fdfaf2';
+    roundRectPath(ctx, -w / 2 - 7, -h / 2 - 7, w + 14, h + 14, 7);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.drawImage(img, -w / 2, -h / 2, w, h);
+    ctx.restore();
+    return { w, h };
+  }
+
+  function drawBokehBackground(ctx, W, H, c1, c2) {
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, c1);
+    grad.addColorStop(1, c2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 14; i++) {
+      const r = 30 + Math.random() * 90;
+      const x = Math.random() * W, y = Math.random() * H;
+      const dg = ctx.createRadialGradient(x, y, 0, x, y, r);
+      dg.addColorStop(0, 'rgba(255,255,255,0.16)');
+      dg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = dg;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  function drawHandMockup(ctx, W, H, img) {
+    drawBokehBackground(ctx, W, H, '#c9a04a', '#5f5646');
+    const vg = ctx.createRadialGradient(W / 2, H * 0.35, H * 0.1, W / 2, H * 0.35, H * 0.8);
+    vg.addColorStop(0, 'rgba(0,0,0,0)');
+    vg.addColorStop(1, 'rgba(20,15,5,0.4)');
+    ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H * 0.4, rotation = -7 * Math.PI / 180;
+    const { w, h } = drawStripImage(ctx, img, cx, cy, W * 0.56, H * 0.62, rotation, { shadow: true });
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+    const skin = '#c8895f', skinShade = '#a66a44';
+    ctx.fillStyle = skin;
+    roundRectPath(ctx, -w * 0.58, h * 0.2, w * 1.16, h * 0.85, w * 0.3);
+    ctx.fill();
+    const fingerW = w * 0.24;
+    [-0.3, -0.02, 0.26].forEach((fx, i) => {
+      ctx.fillStyle = i === 1 ? skin : skinShade;
+      roundRectPath(ctx, fx * w - fingerW / 2, h * 0.02, fingerW, h * 0.42, fingerW * 0.45);
+      ctx.fill();
+    });
+    ctx.fillStyle = skinShade;
+    roundRectPath(ctx, -w * 0.66, h * 0.06, w * 0.28, h * 0.22, w * 0.1);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawPocketMockup(ctx, W, H, img) {
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#5b7fa0');
+    grad.addColorStop(1, '#33495f');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.globalAlpha = 0.08;
+    ctx.strokeStyle = '#1f2f3f';
+    ctx.lineWidth = 3;
+    for (let x = -H; x < W; x += 12) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + H, H); ctx.stroke(); }
+    ctx.restore();
+
+    const cx = W * 0.5, cy = H * 0.4, rotation = 6 * Math.PI / 180;
+    drawStripImage(ctx, img, cx, cy, W * 0.5, H * 0.52, rotation, { shadow: true });
+
+    const mouthY = H * 0.6;
+    ctx.fillStyle = '#4a6a87';
+    ctx.beginPath();
+    ctx.moveTo(W * 0.1, mouthY + 10);
+    ctx.quadraticCurveTo(W * 0.5, mouthY - 26, W * 0.9, mouthY + 10);
+    ctx.lineTo(W * 0.86, H * 0.94);
+    ctx.quadraticCurveTo(W * 0.5, H, W * 0.14, H * 0.94);
+    ctx.closePath();
+    ctx.fill();
+    ctx.setLineDash([7, 6]);
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(255, 224, 170, 0.6)';
+    ctx.beginPath();
+    ctx.moveTo(W * 0.1, mouthY + 10);
+    ctx.quadraticCurveTo(W * 0.5, mouthY - 26, W * 0.9, mouthY + 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(255,224,170,0.5)';
+    ctx.beginPath(); ctx.arc(W * 0.5, mouthY + 40, 6, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function drawBgMockup(ctx, W, H, img) {
+    drawBokehBackground(ctx, W, H, '#e6dcc0', '#c9a04a');
+    const cx = W / 2, cy = H / 2, rotation = -4 * Math.PI / 180;
+    drawStripImage(ctx, img, cx, cy, W * 0.62, H * 0.72, rotation, { shadow: true, shadowBlur: 45, shadowOffsetY: 28 });
+    ctx.save();
+    ctx.font = '600 22px sans-serif';
+    ctx.fillStyle = 'rgba(36,31,22,0.55)';
+    ctx.textAlign = 'center';
+    ctx.fillText('jepretin.app', W / 2, H - 28);
+    ctx.restore();
+  }
+
+  function renderMockupCanvas() {
+    const canvas = $('mockup-canvas');
+    if (!canvas || !mockupImgObj) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    if (mockupStyle === 'hand') drawHandMockup(ctx, W, H, mockupImgObj);
+    else if (mockupStyle === 'pocket') drawPocketMockup(ctx, W, H, mockupImgObj);
+    else drawBgMockup(ctx, W, H, mockupImgObj);
   }
 
   /* ---------------- boot ---------------- */
@@ -436,7 +630,8 @@
   window.JepretinAuth = {
     isLoggedIn, getCurrentUser, logoutUser, setAuthMode,
     addHistoryEntry, getMyHistory, clearMyHistory, deleteHistoryEntry,
-    openHistoryModal, closeHistoryModal, togglePasswordVisibility
+    openHistoryModal, closeHistoryModal, togglePasswordVisibility,
+    openMockupModal, closeMockupModal, setMockupStyle, downloadMockupResult
   };
   // Convenience globals used directly by onclick="" attributes in index.html
   window.logoutUser = logoutUser;
