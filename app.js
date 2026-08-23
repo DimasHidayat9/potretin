@@ -742,6 +742,16 @@ const video = document.getElementById('webcam');
       if (isMuted) stopAmbient();
       else { getAudioCtx(); if (sessionStarted) startAmbient(); }
       showToast(isMuted ? 'Suara dimatikan' : 'Suara diaktifkan', isMuted ? '🔇' : '🔊');
+      syncSoundMenuToggle();
+    }
+
+    function syncSoundMenuToggle() {
+      const sw = document.getElementById('sound-menu-switch');
+      const icon = document.getElementById('sound-menu-icon');
+      const item = document.getElementById('sound-menu-item');
+      if (sw) sw.classList.toggle('is-on', !isMuted);
+      if (icon) icon.className = (isMuted ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high') + ' w-5';
+      if (item) item.setAttribute('aria-checked', String(!isMuted));
     }
 
     /* ---------- Button ripple micro-interaction ---------- */
@@ -1220,6 +1230,7 @@ const video = document.getElementById('webcam');
       if (!modal) return;
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      syncSoundMenuToggle();
     }
     function closeMoreMenu() {
       const modal = document.getElementById('more-menu-modal');
