@@ -33,6 +33,7 @@
 
   <!-- ============ SPLASH / LOADING SCREEN (shown briefly on first load) ============ -->
   <div id="shutter-iris" aria-hidden="true"></div>
+  <div id="shutter-flash" aria-hidden="true"></div>
   <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 py-6 text-center overflow-y-auto" style="background: radial-gradient(circle at 50% 30%, #fdfbf6, #f3ecdc 75%);">
     <div class="blob w-96 h-96 bg-amber-500/7 -top-10 -left-10"></div>
     <div class="blob w-96 h-96 bg-[#c96b4a]/7 bottom-0 -right-10" style="animation-delay:-6s;"></div>
@@ -46,6 +47,7 @@
       <div class="relative">
         <div class="splash-flash-pop"></div>
         <div class="absolute inset-0 rounded-full splash-ring"></div>
+        <div class="absolute -inset-2 rounded-full splash-aperture-ring" aria-hidden="true"></div>
         <div class="splash-bulb-ring" aria-hidden="true">
           <div class="splash-bulb" style="transform:rotate(0deg) translateY(-57px); animation-delay:0s;"></div>
           <div class="splash-bulb" style="transform:rotate(30deg) translateY(-57px); animation-delay:0.15s;"></div>
@@ -64,9 +66,11 @@
           <img src="jepretin-icon.png" alt="Jepretin" class="w-full h-full object-cover">
         </div>
       </div>
-      <div class="splash-text-in" style="animation-delay:0.25s;">
-        <h1 class="font-brand text-4xl sm:text-5xl leading-none text-[var(--brass-soft)]" style="text-shadow: 0 1px 0 rgba(0,0,0,0.6), 0 0 24px rgba(185,160,110,0.35);">JEPRETIN</h1>
-        <p class="text-[11px] tracking-[0.3em] uppercase text-[#6b6152] font-semibold mt-2">Jepret &middot; Gaya &middot; Simpan</p>
+      <div>
+        <h1 class="font-brand text-4xl sm:text-5xl leading-none text-[var(--brass-soft)] splash-wordmark" style="text-shadow: 0 1px 0 rgba(0,0,0,0.6), 0 0 24px rgba(185,160,110,0.35);" aria-label="JEPRETIN">
+          <span aria-hidden="true" style="animation-delay:0.32s;">J</span><span aria-hidden="true" style="animation-delay:0.36s;">E</span><span aria-hidden="true" style="animation-delay:0.40s;">P</span><span aria-hidden="true" style="animation-delay:0.44s;">R</span><span aria-hidden="true" style="animation-delay:0.48s;">E</span><span aria-hidden="true" style="animation-delay:0.52s;">T</span><span aria-hidden="true" style="animation-delay:0.56s;">I</span><span aria-hidden="true" style="animation-delay:0.60s;">N</span>
+        </h1>
+        <p class="text-[11px] tracking-[0.3em] uppercase text-[#6b6152] font-semibold mt-2 splash-text-in" style="animation-delay:0.7s;">Jepret &middot; Gaya &middot; Simpan</p>
       </div>
       <div class="splash-reel-wrap splash-text-in" style="animation-delay:0.35s;">
         <svg class="splash-reel" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
