@@ -65,6 +65,14 @@
             // Shutter closes over the splash content with a quick flash,
             // then the whole screen fades to reveal the landing page.
             splash.classList.add('splash-shutter-close');
+            const closeFlash = document.getElementById('shutter-flash');
+            if (closeFlash) {
+              closeFlash.style.opacity = '0';
+              closeFlash.classList.remove('shutter-flash-repeat');
+              // Force reflow so the animation restarts cleanly.
+              void closeFlash.offsetWidth;
+              closeFlash.classList.add('shutter-flash-repeat');
+            }
             const landing = document.getElementById('landing-screen');
             if (landing) landing.classList.add('play-intro');
             const flash = document.getElementById('landing-strip-flash');
