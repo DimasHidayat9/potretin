@@ -564,7 +564,7 @@
           </div>
 
           <!-- Live Preview Frame with sprockets + Dynamic Theme Overlay -->
-          <div class="flex items-stretch gap-1.5 w-full max-w-[260px]">
+          <div class="flex items-stretch gap-1.5 w-full max-w-[260px] strip-card-wrap">
             <div class="w-2.5 rounded-full sprockets opacity-70 shrink-0"></div>
 
             <div id="strip-card" class="relative flex-1 p-4 rounded-2xl shadow-2xl flex flex-col gap-3 items-center frame-nature tilt-card transition-all duration-500 overflow-hidden">
@@ -713,7 +713,7 @@
   <canvas id="export-canvas" class="hidden"></canvas>
 
   <!-- Photo Battle Modal: Tinder-style "which is better" vote before the strip is finalized -->
-  <div id="battle-modal" class="hidden fixed inset-0 z-[68] bg-[var(--wood)]/97 flex-col" role="dialog" aria-modal="true" aria-label="Photo Battle — pilih foto terbaik">
+  <div id="battle-modal" class="hidden fixed inset-0 z-[68] bg-[var(--wood)]/92 backdrop-blur-xl flex-col" role="dialog" aria-modal="true" aria-label="Photo Battle — pilih foto terbaik">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#241f16] flex items-center gap-2"><i class="fa-solid fa-fire text-[var(--crimson-soft)]"></i> Photo Battle</h2>
@@ -735,7 +735,7 @@
   </div>
 
   <!-- Preview Modal: review all photos before downloading -->
-  <div id="preview-modal" class="hidden fixed inset-0 z-[60] bg-[var(--wood)]/96 flex-col" role="dialog" aria-modal="true" aria-label="Pratinjau semua foto">
+  <div id="preview-modal" class="hidden fixed inset-0 z-[60] bg-[var(--wood)]/92 backdrop-blur-xl flex-col" role="dialog" aria-modal="true" aria-label="Pratinjau semua foto">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#241f16]">Pratinjau Hasil Foto</h2>
@@ -775,7 +775,7 @@
   </div>
 
   <!-- Frame Modal: dedicated screen for picking the print/photobox frame theme -->
-  <div id="frame-modal" class="hidden fixed inset-0 z-[65] bg-[var(--wood)]/96 flex-col" role="dialog" aria-modal="true" aria-label="Pilih tema bingkai">
+  <div id="frame-modal" class="hidden fixed inset-0 z-[65] bg-[var(--wood)]/92 backdrop-blur-xl flex-col" role="dialog" aria-modal="true" aria-label="Pilih tema bingkai">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#241f16]">Pilih Tema Bingkai</h2>
@@ -791,7 +791,7 @@
   </div>
 
   <!-- IG Modal: dedicated screen for picking IG post frame style + relationship caption -->
-  <div id="ig-modal" class="hidden fixed inset-0 z-[65] bg-[var(--wood)]/96 flex-col" role="dialog" aria-modal="true" aria-label="Bingkai IG Post">
+  <div id="ig-modal" class="hidden fixed inset-0 z-[65] bg-[var(--wood)]/92 backdrop-blur-xl flex-col" role="dialog" aria-modal="true" aria-label="Bingkai IG Post">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#241f16]">Bingkai IG Post</h2>
@@ -862,7 +862,7 @@
   </div>
 
   <!-- History Modal: riwayat foto milik user yang sedang login (tersimpan di localStorage) -->
-  <div id="history-modal" class="hidden fixed inset-0 z-[65] bg-[var(--wood)]/96 flex-col" role="dialog" aria-modal="true" aria-label="Riwayat foto">
+  <div id="history-modal" class="hidden fixed inset-0 z-[65] bg-[var(--wood)]/92 backdrop-blur-xl flex-col" role="dialog" aria-modal="true" aria-label="Riwayat foto">
     <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
       <div>
         <h2 class="text-base sm:text-lg font-bold text-[#241f16]">Riwayat Foto</h2>
@@ -884,6 +884,80 @@
         <p class="text-xs max-w-xs">Setiap kali kamu download strip, grid, GIF, atau IG post, hasilnya otomatis muncul di sini.</p>
       </div>
       <div id="history-modal-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 max-w-3xl mx-auto"></div>
+    </div>
+  </div>
+
+  <!-- Mockup Modal: preview strip foto dalam gaya "POV" (dipegang tangan / saku celana / latar aesthetic) -->
+  <div id="mockup-modal" class="hidden fixed inset-0 z-[70] bg-[var(--wood)]/95 backdrop-blur-xl flex-col" role="dialog" aria-modal="true" aria-label="Pratinjau POV foto">
+    <div class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[var(--line)] shrink-0">
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-[#241f16]">Pratinjau POV</h2>
+        <p class="text-xs text-[#6b6152] mt-0.5">Pilih gaya, lalu unduh hasilnya</p>
+      </div>
+      <button onclick="JepretinAuth.closeMockupModal()" aria-label="Tutup" class="ripple-btn w-11 h-11 flex items-center justify-center rounded-full bg-[#ffffff] border border-[var(--line)] text-[#8f8163] hover:text-[#241f16] hover:border-[#746a52] transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 flex flex-col items-center gap-5">
+      <div id="mockup-style-tabs" class="flex gap-2 flex-wrap justify-center">
+        <button data-style="hand" onclick="JepretinAuth.setMockupStyle('hand')" class="mockup-tab-btn px-4 py-2 rounded-full text-xs font-semibold border border-[var(--line)] bg-white text-[#6b6152] transition">
+          <i class="fa-solid fa-hand-holding mr-1.5"></i>Dipegang Tangan
+        </button>
+        <button data-style="pocket" onclick="JepretinAuth.setMockupStyle('pocket')" class="mockup-tab-btn px-4 py-2 rounded-full text-xs font-semibold border border-[var(--line)] bg-white text-[#6b6152] transition">
+          <i class="fa-solid fa-tshirt mr-1.5"></i>Di Saku Celana
+        </button>
+        <button data-style="bg" onclick="JepretinAuth.setMockupStyle('bg')" class="mockup-tab-btn px-4 py-2 rounded-full text-xs font-semibold border border-[var(--line)] bg-white text-[#6b6152] transition">
+          <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i>Latar Aesthetic
+        </button>
+      </div>
+      <div class="mockup-canvas-wrap">
+        <canvas id="mockup-canvas" width="760" height="1000"></canvas>
+      </div>
+      <button onclick="JepretinAuth.downloadMockupResult()" class="ripple-btn inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm bg-[var(--brass)] text-[#22261c] hover:brightness-105 transition">
+        <i class="fa-solid fa-download"></i> Unduh POV
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation: floating "aperture dock" — akses cepat Home, Sesi Potret, Sesi POV, & fitur lainnya -->
+  <nav id="bottom-nav" class="fixed inset-x-0 bottom-0 z-[93] flex justify-center px-3 pt-2 pb-[calc(0.65rem+env(safe-area-inset-bottom))]" aria-label="Navigasi utama">
+    <div id="nav-dock" class="nav-dock">
+      <span id="nav-indicator" class="nav-indicator" aria-hidden="true"></span>
+      <button data-nav="home" onclick="goHome()" class="bottom-nav-btn ripple-btn" aria-label="Home">
+        <span class="nav-icon-ring"><i class="fa-solid fa-house"></i></span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button data-nav="potret" onclick="goToSesiPotret()" class="bottom-nav-btn ripple-btn" aria-label="Studio — mulai sesi potret">
+        <span class="nav-icon-ring"><i class="fa-solid fa-camera"></i></span>
+        <span class="nav-label">Studio</span>
+      </button>
+      <button data-nav="pov" onclick="goToSesiPOV()" class="bottom-nav-btn ripple-btn" aria-label="Galeri — riwayat & mockup POV">
+        <span class="nav-icon-ring"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+        <span class="nav-label">Galeri</span>
+      </button>
+      <button data-nav="menu" onclick="openMoreMenu()" class="bottom-nav-btn ripple-btn" aria-label="Lainnya — menu tambahan">
+        <span class="nav-icon-ring"><i class="fa-solid fa-bars"></i></span>
+        <span class="nav-label">Lainnya</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- More Menu sheet: fitur tambahan yang tidak muat di bottom nav -->
+  <div id="more-menu-modal" class="hidden fixed inset-0 z-[94] bg-black/50 backdrop-blur-sm items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label="Menu lainnya" onclick="if (event.target === this) closeMoreMenu();">
+    <div class="w-full sm:max-w-sm panel-machine rounded-t-2xl sm:rounded-2xl border border-[var(--line)] px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-4">
+      <div class="w-10 h-1 rounded-full bg-[var(--line)] mx-auto mb-3 sm:hidden"></div>
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-sm font-bold text-[#241f16]">Menu Lainnya</h2>
+        <button onclick="closeMoreMenu()" aria-label="Tutup" class="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-[var(--line)] text-[#8f8163] hover:text-[#241f16]">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="flex flex-col divide-y divide-[var(--line)]">
+        <button onclick="closeMoreMenu(); toggleMute();" class="more-menu-item"><i class="fa-solid fa-volume-high w-5"></i> Suara Efek &amp; Countdown</button>
+        <button onclick="closeMoreMenu(); cycleVibe();" class="more-menu-item"><i class="fa-solid fa-mug-hot w-5"></i> Ganti Musik Latar</button>
+        <button onclick="closeMoreMenu(); goToSesiPOV();" class="more-menu-item"><i class="fa-solid fa-clock-rotate-left w-5"></i> Riwayat &amp; POV Foto</button>
+        <button onclick="closeMoreMenu(); logoutUser();" class="more-menu-item more-menu-item-danger"><i class="fa-solid fa-right-from-bracket w-5"></i> Keluar Akun</button>
+      </div>
     </div>
   </div>
 
