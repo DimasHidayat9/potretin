@@ -456,60 +456,251 @@ const video = document.getElementById('webcam');
       speakLine(line);
     }
 
-    /* ---------- Ambient background pad — user-selectable studio "vibe" ---------- */
-    const AMBIENT_VIBES = {
-      lounge: { label: 'Lounge', icon: 'fa-mug-hot',    notes: [130.81, 164.81, 196.00], type: 'sine',     filterBase: 900,  filterRange: 220, sweepSpeed: 1.2 },
-      arcade: { label: 'Arcade', icon: 'fa-gamepad',    notes: [174.61, 220.00, 261.63], type: 'triangle', filterBase: 1300, filterRange: 500, sweepSpeed: 0.55 },
-      lofi:   { label: 'Lo-fi',  icon: 'fa-cloud-moon', notes: [110.00, 130.81, 164.81], type: 'sine',     filterBase: 550,  filterRange: 140, sweepSpeed: 2.2 }
+    /* ---------- Ambient background MUSIC — real procedurally-composed loops ----------
+       Each "vibe" is an actual little song (chord progression + walking/arpeggiated bass +
+       melody hook + drum groove), sequenced live with the Web Audio API using a lookahead
+       scheduler (the standard "Tale of Two Clocks" pattern) — not a static drone/pad. All
+       notes are synthesized on the fly, so no audio files or network requests are needed. */
+
+    const NOTE_LETTER_SEMITONE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+    function noteToMidi(note) {
+      const m = /^([A-Ga-g])(#|b)?(-?\d+)$/.exec(note);
+      if (!m) return 60;
+      let s = NOTE_LETTER_SEMITONE[m[1].toUpperCase()];
+      if (m[2] === '#') s += 1; else if (m[2] === 'b') s -= 1;
+      return (parseInt(m[3], 10) + 1) * 12 + s;
+    }
+    function midiToFreq(midi) { return 440 * Math.pow(2, (midi - 69) / 12); }
+    function noteFreq(note, semitoneOffset) { return midiToFreq(noteToMidi(note) + (semitoneOffset || 0)); }
+    const CHORD_TONES = { maj: [0, 4, 7], min: [0, 3, 7], maj7: [0, 4, 7, 11], min7: [0, 3, 7, 10], dom7: [0, 4, 7, 10] };
+    function chordFreqs(root, quality) {
+      const base = noteToMidi(root);
+      return (CHORD_TONES[quality] || CHORD_TONES.maj).map((iv) => midiToFreq(base + iv));
+    }
+
+    let musicNoiseBuffer = null;
+    function getNoiseBuffer(ctx) {
+      if (!musicNoiseBuffer || musicNoiseBuffer.sampleRate !== ctx.sampleRate) {
+        const len = ctx.sampleRate * 1;
+        musicNoiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
+        const data = musicNoiseBuffer.getChannelData(0);
+        for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      }
+      return musicNoiseBuffer;
+    }
+
+    /* ---- Tiny synth "instrument" voices, all routed through the track's mix bus ---- */
+    function synKick(ctx, bus, time, vol) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(150, time);
+      osc.frequency.exponentialRampToValueAtTime(42, time + 0.14);
+      gain.gain.setValueAtTime(vol || 0.9, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.24);
+      osc.connect(gain); gain.connect(bus);
+      osc.start(time); osc.stop(time + 0.26);
+    }
+    function synSnare(ctx, bus, time, vol) {
+      const noise = ctx.createBufferSource();
+      noise.buffer = getNoiseBuffer(ctx);
+      const nf = ctx.createBiquadFilter(); nf.type = 'highpass'; nf.frequency.value = 1400;
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(vol || 0.45, time);
+      ng.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+      noise.connect(nf); nf.connect(ng); ng.connect(bus);
+      noise.start(time); noise.stop(time + 0.16);
+      const osc = ctx.createOscillator(); osc.type = 'triangle'; osc.frequency.value = 190;
+      const og = ctx.createGain();
+      og.gain.setValueAtTime((vol || 0.45) * 0.5, time);
+      og.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+      osc.connect(og); og.connect(bus);
+      osc.start(time); osc.stop(time + 0.1);
+    }
+    function synHat(ctx, bus, time, open, vol) {
+      const noise = ctx.createBufferSource();
+      noise.buffer = getNoiseBuffer(ctx);
+      const hf = ctx.createBiquadFilter(); hf.type = 'highpass'; hf.frequency.value = 7500;
+      const hg = ctx.createGain();
+      const dur = open ? 0.16 : 0.045;
+      hg.gain.setValueAtTime(vol || 0.16, time);
+      hg.gain.exponentialRampToValueAtTime(0.0008, time + dur);
+      noise.connect(hf); hf.connect(hg); hg.connect(bus);
+      noise.start(time); noise.stop(time + dur);
+    }
+    function synStab(ctx, bus, freqs, time, dur, wave, vol) {
+      freqs.forEach((f) => {
+        const osc = ctx.createOscillator(); osc.type = wave || 'triangle'; osc.frequency.value = f;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, time);
+        g.gain.exponentialRampToValueAtTime(vol || 0.09, time + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+        osc.connect(g); g.connect(bus);
+        osc.start(time); osc.stop(time + dur + 0.02);
+      });
+    }
+    function synPad(ctx, bus, freqs, time, dur, wave, vol) {
+      freqs.forEach((f) => {
+        [0, 1].forEach((i) => {
+          const osc = ctx.createOscillator();
+          osc.type = wave || 'sawtooth';
+          osc.frequency.value = f;
+          osc.detune.value = i === 0 ? -4 : 4;
+          const g = ctx.createGain();
+          const peak = vol || 0.05;
+          g.gain.setValueAtTime(0.0001, time);
+          g.gain.exponentialRampToValueAtTime(peak, time + 0.25);
+          g.gain.setValueAtTime(peak, Math.max(time + 0.25, time + dur - 0.2));
+          g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+          osc.connect(g); g.connect(bus);
+          osc.start(time); osc.stop(time + dur + 0.05);
+        });
+      });
+    }
+    function synBass(ctx, bus, freq, time, dur, wave, vol) {
+      const osc = ctx.createOscillator(); osc.type = wave || 'sine'; osc.frequency.value = freq;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, time);
+      g.gain.exponentialRampToValueAtTime(vol || 0.16, time + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+      osc.connect(g); g.connect(bus);
+      osc.start(time); osc.stop(time + dur + 0.02);
+    }
+    function synLead(ctx, bus, freq, time, dur, wave, vol) {
+      const osc = ctx.createOscillator(); osc.type = wave || 'square'; osc.frequency.value = freq;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 5.5;
+      const lfoGain = ctx.createGain(); lfoGain.gain.value = freq * 0.006;
+      lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, time);
+      g.gain.exponentialRampToValueAtTime(vol || 0.08, time + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+      osc.connect(g); g.connect(bus);
+      osc.start(time); lfo.start(time);
+      osc.stop(time + dur + 0.02); lfo.stop(time + dur + 0.02);
+    }
+
+    /* ---- The 4 studio "vibes" — each a real 4-bar loop with its own chords/bass/melody/drums ---- */
+    const MUSIC_TRACKS = {
+      lounge: {
+        label: 'Lounge Jazz', icon: 'fa-mug-hot', bpm: 86, swing: 0.55, style: 'lounge',
+        progression: [{ root: 'D3', q: 'min7' }, { root: 'G3', q: 'dom7' }, { root: 'C3', q: 'maj7' }, { root: 'A2', q: 'min7' }],
+      },
+      arcade: {
+        label: 'Arcade 8-bit', icon: 'fa-gamepad', bpm: 140, swing: 0, style: 'arcade',
+        progression: [{ root: 'C3', q: 'maj' }, { root: 'G2', q: 'maj' }, { root: 'A2', q: 'min' }, { root: 'F2', q: 'maj' }],
+      },
+      lofi: {
+        label: 'Lo-fi Chill', icon: 'fa-cloud-moon', bpm: 72, swing: 0.6, style: 'lofi',
+        progression: [{ root: 'F3', q: 'maj7' }, { root: 'E3', q: 'min7' }, { root: 'D3', q: 'min7' }, { root: 'C3', q: 'maj7' }],
+      },
+      synthwave: {
+        label: 'Synth Retro', icon: 'fa-satellite-dish', bpm: 100, swing: 0, style: 'synthwave',
+        progression: [{ root: 'A2', q: 'min' }, { root: 'F2', q: 'maj' }, { root: 'C3', q: 'maj' }, { root: 'G2', q: 'maj' }],
+      },
     };
-    const VIBE_KEYS = Object.keys(AMBIENT_VIBES);
+    const VIBE_KEYS = Object.keys(MUSIC_TRACKS);
     let currentVibe = 'lounge';
     updateVibeButtonUI();
+
+    const STEPS_PER_BAR = 16;
+    const BARS_PER_LOOP = 4;
+    const SCHEDULE_AHEAD = 0.12; // seconds — how far ahead we queue notes
+    const LOOKAHEAD_MS = 25;     // how often the scheduler wakes up to queue more
+
+    function swingDelay(step, secondsPerStep, swingAmt) {
+      // Push the "and" of every beat (odd 16th-steps) a touch later for a swung, human feel.
+      return step % 2 === 1 ? secondsPerStep * (swingAmt || 0) : 0;
+    }
+
+    function scheduleStepForTrack(track, ctx, bus, bar, step, time) {
+      const chord = track.progression[bar % track.progression.length];
+      const freqs = chordFreqs(chord.root, chord.q);
+      const rootBass = noteFreq(chord.root, -12);
+
+      if (track.style === 'lounge') {
+        if (step === 0) { synStab(ctx, bus, freqs, time, 0.9, 'triangle', 0.075); synBass(ctx, bus, rootBass, time, 0.5, 'sine', 0.16); }
+        if (step === 8) { synBass(ctx, bus, noteFreq(chord.root, -5), time, 0.45, 'sine', 0.13); synSnare(ctx, bus, time, 0.18); }
+        if (step === 2 || step === 6 || step === 10 || step === 14) synHat(ctx, bus, time, false, 0.07);
+        if (step === 4) synLead(ctx, bus, noteFreq(chord.root, 7), time, 0.32, 'sine', 0.05);
+        if (step === 13) synLead(ctx, bus, noteFreq(chord.root, 12), time, 0.32, 'sine', 0.05);
+      } else if (track.style === 'arcade') {
+        const arp = [0, 4, 7, 4];
+        if (step % 4 === 0) synBass(ctx, bus, noteFreq(chord.root, arp[(step / 4) % arp.length] - 12), time, 0.11, 'square', 0.11);
+        const hook = [12, 15, 19, 15, 17, 19, 24, 19];
+        if (step % 2 === 0) synLead(ctx, bus, noteFreq(chord.root, hook[((step / 2) + bar * 8) % hook.length]), time, 0.16, 'square', 0.07);
+        if (step === 0 || step === 4 || step === 8 || step === 12) synKick(ctx, bus, time, 0.8);
+        if (step === 4 || step === 12) synSnare(ctx, bus, time, 0.35);
+        synHat(ctx, bus, time, false, 0.055);
+      } else if (track.style === 'lofi') {
+        if (step === 0) { synPad(ctx, bus, freqs, time, 1.8, 'sine', 0.045); synBass(ctx, bus, rootBass, time, 0.6, 'sine', 0.15); synKick(ctx, bus, time, 0.55); }
+        if (step === 10) { synBass(ctx, bus, rootBass, time, 0.4, 'sine', 0.11); synKick(ctx, bus, time, 0.5); }
+        if (step === 4 || step === 12) synSnare(ctx, bus, time, 0.22);
+        if (step === 2 || step === 5 || step === 8 || step === 11 || step === 14) synHat(ctx, bus, time, false, 0.045);
+        if (step === 6 && bar % 2 === 1) synLead(ctx, bus, noteFreq(chord.root, 12), time, 0.5, 'triangle', 0.045);
+      } else if (track.style === 'synthwave') {
+        if (step === 0) { synPad(ctx, bus, freqs, time, 3.6, 'sawtooth', 0.045); synLead(ctx, bus, noteFreq(chord.root, 12), time, 1.4, 'sawtooth', 0.055); }
+        if (step === 8) synLead(ctx, bus, noteFreq(chord.root, 15), time, 1.4, 'sawtooth', 0.05);
+        const bassPattern = [0, -12, 0, 7, 0, -12, 0, 3];
+        if (step % 2 === 0) synBass(ctx, bus, noteFreq(chord.root, bassPattern[(step / 2) % bassPattern.length] - 12), time, 0.22, 'sawtooth', 0.12);
+        if (step === 0 || step === 8) synKick(ctx, bus, time, 0.75);
+        if (step === 4 || step === 12) synSnare(ctx, bus, time, 0.3);
+        if (step % 2 === 0) synHat(ctx, bus, time, false, 0.05);
+      }
+    }
 
     function startAmbient() {
       if (isMuted || ambientNodes) return;
       const ctx = getAudioCtx();
       if (!ctx) return;
-      const vibe = AMBIENT_VIBES[currentVibe] || AMBIENT_VIBES.lounge;
+      const track = MUSIC_TRACKS[currentVibe] || MUSIC_TRACKS.lounge;
 
-      const master = ctx.createGain();
-      master.gain.value = 0.035;
-      master.connect(ctx.destination);
+      const bus = ctx.createGain();
+      bus.gain.setValueAtTime(0.0001, ctx.currentTime);
+      bus.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.8);
+      const comp = ctx.createDynamicsCompressor();
+      bus.connect(comp);
+      comp.connect(ctx.destination);
 
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.value = vibe.filterBase;
-      filter.connect(master);
+      const state = {
+        ctx, bus, comp, track,
+        secondsPerStep: (60 / track.bpm) / 4,
+        nextNoteTime: ctx.currentTime + 0.05,
+        step: 0, bar: 0, timerID: null, stopping: false,
+      };
 
-      const oscs = vibe.notes.map((freq, i) => {
-        const osc = ctx.createOscillator();
-        osc.type = vibe.type;
-        osc.frequency.value = freq;
-        osc.detune.value = (i - 1) * 4;
-        osc.connect(filter);
-        osc.start();
-        return osc;
-      });
-
-      // slow filter sweep so the pad breathes instead of droning flat
-      let t = 0;
-      const sweep = setInterval(() => {
-        if (!ambientNodes) { clearInterval(sweep); return; }
-        t += 0.15;
-        filter.frequency.setTargetAtTime(vibe.filterBase + Math.sin(t) * vibe.filterRange, ctx.currentTime, vibe.sweepSpeed);
-      }, 1200);
-
-      ambientNodes = { master, filter, oscs, sweep };
+      function advance() {
+        state.nextNoteTime += state.secondsPerStep;
+        state.step += 1;
+        if (state.step >= STEPS_PER_BAR) { state.step = 0; state.bar = (state.bar + 1) % BARS_PER_LOOP; }
+      }
+      function loop() {
+        if (state.stopping) return;
+        while (state.nextNoteTime < state.ctx.currentTime + SCHEDULE_AHEAD) {
+          const swing = swingDelay(state.step, state.secondsPerStep, state.track.swing);
+          scheduleStepForTrack(state.track, state.ctx, state.bus, state.bar, state.step, state.nextNoteTime + swing);
+          advance();
+        }
+        state.timerID = setTimeout(loop, LOOKAHEAD_MS);
+      }
+      loop();
+      ambientNodes = state;
     }
     function stopAmbient() {
       if (!ambientNodes) return;
-      clearInterval(ambientNodes.sweep);
-      ambientNodes.oscs.forEach(o => { try { o.stop(); } catch (e) {} });
-      try { ambientNodes.master.disconnect(); } catch (e) {}
-      ambientNodes = null;
+      const state = ambientNodes;
+      ambientNodes = null; // release right away so cycleVibe() can start the next track immediately (crossfade)
+      state.stopping = true;
+      if (state.timerID) clearTimeout(state.timerID);
+      try {
+        state.bus.gain.cancelScheduledValues(state.ctx.currentTime);
+        state.bus.gain.setValueAtTime(state.bus.gain.value, state.ctx.currentTime);
+        state.bus.gain.linearRampToValueAtTime(0.0001, state.ctx.currentTime + 0.35);
+      } catch (e) { /* context may already be gone */ }
+      setTimeout(() => { try { state.bus.disconnect(); state.comp.disconnect(); } catch (e) {} }, 500);
     }
     function updateVibeButtonUI() {
-      const vibe = AMBIENT_VIBES[currentVibe];
+      const vibe = MUSIC_TRACKS[currentVibe];
       const icon = document.getElementById('vibe-icon');
       const label = document.getElementById('vibe-label');
       if (icon) icon.className = `fa-solid ${vibe.icon} text-xs`;
@@ -520,7 +711,7 @@ const video = document.getElementById('webcam');
       currentVibe = VIBE_KEYS[(idx + 1) % VIBE_KEYS.length];
       updateVibeButtonUI();
       if (ambientNodes) { stopAmbient(); startAmbient(); }
-      showToast(`Musik latar studio: ${AMBIENT_VIBES[currentVibe].label}`, '🎵');
+      showToast(`Musik latar studio: ${MUSIC_TRACKS[currentVibe].label}`, '🎵');
     }
 
     /* Paper-feed sound — a short noisy sweep timed with the print-out animation */
@@ -572,6 +763,7 @@ const video = document.getElementById('webcam');
     document.querySelectorAll('.ripple-btn').forEach(attachRipple);
     attachRipple(cameraSwitchBtn);
     attachRipple(document.getElementById('mute-toggle'));
+    setActiveNavTab('home');
 
     /* ---------- Tilt / parallax on the machine card ---------- */
     const canHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
@@ -932,6 +1124,108 @@ const video = document.getElementById('webcam');
       requestAnimationFrame(() => { welcomeScreen.style.opacity = '1'; });
       backToStartStage();
       startWelcomeRotator();
+    }
+
+    /* ---------------- Bottom nav: Home / Sesi Potret / Sesi POV / Menu ---------------- */
+    function setActiveNavTab(tab) {
+      let activeBtn = null;
+      document.querySelectorAll('.bottom-nav-btn').forEach((btn) => {
+        const isActive = btn.dataset.nav === tab;
+        btn.classList.toggle('nav-tab-active', isActive);
+        if (isActive) {
+          activeBtn = btn;
+          btn.classList.remove('nav-tab-pop');
+          // Re-trigger the pop animation even on repeated taps of the same tab.
+          void btn.offsetWidth;
+          btn.classList.add('nav-tab-pop');
+        }
+      });
+      followNavIndicator(activeBtn);
+    }
+
+    // Menggerakkan pill indikator brass supaya "meleleh" mengikuti tombol aktif,
+    // termasuk saat labelnya masih melebar (bukan lompat instan ke ukuran akhir).
+    var navIndicatorRAF = null; // var (not let): setActiveNavTab('home') runs earlier in this
+    // script's top-level init (see line ~575), before this point — a `let` here would throw
+    // a temporal-dead-zone ReferenceError at that early call and silently abort ALL script
+    // execution after it, breaking unrelated things like the layout-picker buttons.
+    function followNavIndicator(activeBtn) {
+      const dock = document.getElementById('nav-dock');
+      const indicator = document.getElementById('nav-indicator');
+      if (!dock || !indicator || !activeBtn) return;
+      if (navIndicatorRAF) cancelAnimationFrame(navIndicatorRAF);
+      indicator.style.opacity = '1';
+      const start = performance.now();
+      const FOLLOW_MS = 480; // selaras dengan durasi transisi label/ikon di CSS
+      function step(now) {
+        const dockRect = dock.getBoundingClientRect();
+        const btnRect = activeBtn.getBoundingClientRect();
+        indicator.style.width = btnRect.width + 'px';
+        indicator.style.transform = `translateX(${btnRect.left - dockRect.left}px)`;
+        if (now - start < FOLLOW_MS) {
+          navIndicatorRAF = requestAnimationFrame(step);
+        } else {
+          navIndicatorRAF = null;
+        }
+      }
+      navIndicatorRAF = requestAnimationFrame(step);
+    }
+    window.addEventListener('resize', () => {
+      const activeBtn = document.querySelector('.bottom-nav-btn.nav-tab-active');
+      if (activeBtn) followNavIndicator(activeBtn);
+    });
+
+    function closeAllOpenModalsForNav() {
+      [frameModal, igModal, battleModal, previewModal].forEach((m) => {
+        if (m && !m.classList.contains('hidden')) {
+          m.classList.add('hidden');
+          m.classList.remove('flex');
+        }
+      });
+      document.body.style.overflow = '';
+    }
+
+    function goHome() {
+      closeAllOpenModalsForNav();
+      closeMoreMenu();
+      setActiveNavTab('home');
+      if (welcomeScreen) welcomeScreen.style.display = 'none';
+      if (landingScreen) {
+        landingScreen.classList.remove('landing-fade-out');
+        landingScreen.style.display = 'flex';
+      }
+    }
+
+    function goToSesiPotret() {
+      closeAllOpenModalsForNav();
+      closeMoreMenu();
+      setActiveNavTab('potret');
+      const landingVisible = landingScreen && landingScreen.style.display !== 'none' && !landingScreen.classList.contains('landing-fade-out');
+      if (landingVisible) {
+        enterApp();
+      } else if (welcomeScreen && welcomeScreen.style.display !== 'none' && !sessionStarted) {
+        goToLayoutStage();
+      }
+      // Kalau sesi sudah berjalan, tinggal pastikan tidak ada layar lain yang menutupi studio.
+    }
+
+    function goToSesiPOV() {
+      setActiveNavTab('pov');
+      if (window.JepretinAuth) JepretinAuth.openHistoryModal();
+    }
+
+    function openMoreMenu() {
+      setActiveNavTab('menu');
+      const modal = document.getElementById('more-menu-modal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    function closeMoreMenu() {
+      const modal = document.getElementById('more-menu-modal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
     }
 
     startWelcomeRotator();
