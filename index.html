@@ -953,7 +953,11 @@
         </button>
       </div>
       <div class="flex flex-col divide-y divide-[var(--line)]">
-        <button onclick="closeMoreMenu(); toggleMute();" class="more-menu-item"><i class="fa-solid fa-volume-high w-5"></i> Suara Efek &amp; Countdown</button>
+        <button onclick="toggleMute();" class="more-menu-item more-menu-item-toggle" id="sound-menu-item" role="switch" aria-checked="true">
+          <i class="fa-solid fa-volume-high w-5" id="sound-menu-icon"></i>
+          <span class="flex-1 text-left">Suara Efek &amp; Countdown</span>
+          <span class="mini-switch is-on" id="sound-menu-switch" aria-hidden="true"><span class="mini-switch-knob"></span></span>
+        </button>
         <button onclick="closeMoreMenu(); cycleVibe();" class="more-menu-item"><i class="fa-solid fa-mug-hot w-5"></i> Ganti Musik Latar</button>
         <button onclick="closeMoreMenu(); goToSesiPOV();" class="more-menu-item"><i class="fa-solid fa-clock-rotate-left w-5"></i> Riwayat &amp; POV Foto</button>
         <button onclick="closeMoreMenu(); logoutUser();" class="more-menu-item more-menu-item-danger"><i class="fa-solid fa-right-from-bracket w-5"></i> Keluar Akun</button>
