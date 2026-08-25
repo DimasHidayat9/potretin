@@ -27,6 +27,15 @@
          or when the browser/WebView only reserves scrollbar space on the
          right side. This is what causes uneven left/right margins. */
       scrollbar-gutter: stable both-edges;
+      /* Several decorative ".blob" elements use position:fixed with negative
+         offsets (e.g. -top-10/-right-10) so their blur bleeds off-screen.
+         Fixed-position elements are positioned against the viewport, not
+         <body>, so <body>'s overflow-x:hidden alone doesn't clip them.
+         On some Android Chrome/WebView builds this creates extra,
+         asymmetric horizontal scroll room, which is what makes the camera
+         and other centered content look off-center left/right on Android.
+         Hiding overflow-x here too closes that gap at the root level. */
+      overflow-x: hidden;
     }
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     body {
@@ -55,6 +64,14 @@
       padding-bottom: env(safe-area-inset-bottom);
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
+    }
+    /* Belt-and-suspenders: these screens host the .blob glow decorations,
+       which use position:fixed with negative offsets to bleed off-screen.
+       Clipping horizontal overflow on the screens themselves (in addition
+       to <html>) prevents Android browsers from ever exposing that bleed
+       as scrollable space. */
+    #splash-screen, #auth-screen, #landing-screen, #welcome-screen {
+      overflow-x: hidden;
     }
     /* Comfortable, consistent tap targets on touch devices (Apple/Google recommend ~44px) */
     @media (pointer: coarse) {
