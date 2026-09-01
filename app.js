@@ -963,21 +963,36 @@ const video = document.getElementById('webcam');
       const likeStamp = () => card.querySelector('.battle-like-stamp');
       const nopeStamp = () => card.querySelector('.battle-nope-stamp');
 
+      let axisLocked = null; // 'x' once we're sure this is a horizontal swipe, not a page scroll
+
       card.addEventListener('pointerdown', (e) => {
         dragging = true; picked = false;
+        axisLocked = null;
         startX = e.clientX; startY = e.clientY;
         card.classList.add('dragging');
-        card.setPointerCapture(e.pointerId);
+        // Don't capture yet — wait until we know the gesture is actually
+        // a horizontal swipe. This lets a plain vertical drag fall through
+        // to the browser's native scroll (touch-action: pan-y on .battle-card),
+        // instead of the card eating every single-finger touch.
       });
       card.addEventListener('pointermove', (e) => {
         if (!dragging || picked) return;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
+
+        if (axisLocked === null) {
+          if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return; // too small to tell yet
+          axisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+          if (axisLocked === 'x') card.setPointerCapture(e.pointerId);
+          else return; // vertical intent -> let native page scroll handle it
+        }
+        if (axisLocked !== 'x') return;
+
         card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx / 18}deg)`;
         card.dataset.dragged = (Math.abs(dx) > 8 || Math.abs(dy) > 8) ? '1' : '';
         likeStamp().style.opacity = dy < -30 ? Math.min(1, -dy / 90) : 0;
         nopeStamp().style.opacity = dx < -40 ? Math.min(1, -dx / 120) : 0;
-        if (dy < -70 || dx > 90) {
+        if (dx > 90) {
           picked = true;
           onPick();
         }
