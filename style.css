@@ -1028,7 +1028,7 @@
     /* ---------- Photo Battle: tinder-style vote cards ---------- */
     .battle-card {
       position: relative; width: 44%; max-width: 260px; aspect-ratio: 4 / 5;
-      border-radius: 18px; overflow: hidden; cursor: pointer; touch-action: none;
+      border-radius: 18px; overflow: hidden; cursor: pointer; touch-action: pan-y;
       border: 2px solid var(--line); box-shadow: 0 14px 30px -12px rgba(0,0,0,0.7);
       transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
       background: #1e2018;
