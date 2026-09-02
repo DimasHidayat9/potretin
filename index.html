@@ -355,16 +355,9 @@
         <p class="text-[10px] sm:text-[11px] tracking-[0.22em] uppercase text-[#6b6152] font-semibold mt-1.5">Studio Foto Instan &middot; Multi-Tema</p>
       </div>
     </div>
-    <div class="flex items-center gap-2">
-      <button id="mute-toggle" onclick="toggleMute()" aria-label="Aktifkan/matikan suara" title="Suara shutter & countdown" class="w-11 h-11 flex items-center justify-center rounded-full panel-machine text-[#8f8163] hover:text-[var(--brass-soft)] transition">
-        <i id="mute-icon" class="fa-solid fa-volume-high text-xs"></i>
-      </button>
-      <button id="vibe-toggle" onclick="cycleVibe()" aria-label="Ganti musik latar studio" title="Ganti vibe musik latar studio" class="flex items-center gap-1.5 sm:gap-2 h-11 px-2.5 sm:px-3.5 rounded-full panel-machine text-[#8f8163] hover:text-[var(--brass-soft)] transition">
-        <i id="vibe-icon" class="fa-solid fa-mug-hot text-xs"></i>
-        <span id="vibe-label" class="hidden sm:inline text-[11px] font-semibold">Lounge</span>
-      </button>
-      <button id="history-toggle" onclick="openHistoryModal()" aria-label="Riwayat foto" title="Riwayat foto tersimpan" class="w-11 h-11 flex items-center justify-center rounded-full panel-machine text-[#8f8163] hover:text-[var(--brass-soft)] transition">
-        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+    <div class="flex items-center gap-2 mr-2 sm:mr-3">
+      <button onclick="openMoreMenu()" aria-label="Menu fitur lainnya" title="Suara, musik latar & riwayat foto" class="w-11 h-11 flex items-center justify-center rounded-full panel-machine text-[#8f8163] hover:text-[var(--brass-soft)] transition">
+        <i class="fa-solid fa-sliders text-xs"></i>
       </button>
       <div id="user-badge" class="hidden items-center gap-2 pl-3.5 pr-1.5 py-1.5 rounded-full panel-machine text-[11px] font-semibold text-[#241f16]">
         <i class="fa-solid fa-circle-user text-[var(--brass-soft)]"></i>
@@ -375,6 +368,14 @@
       </div>
       <div class="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full panel-machine text-[11px] font-tech text-[var(--crimson-soft)]">
         <span class="w-1.5 h-1.5 rounded-full bg-[var(--crimson-soft)] animate-pulse"></span> SESI AKTIF
+      </div>
+      <!-- Kontrol asli disembunyikan (bukan dihapus) supaya id/JS (toggleMute, cycleVibe,
+           openHistoryModal) tetap jalan tanpa perubahan — semuanya sekarang diakses lewat
+           tombol "sliders" di atas, yang membuka #more-menu-modal. -->
+      <div class="hidden">
+        <button id="mute-toggle" onclick="toggleMute()" aria-label="Aktifkan/matikan suara"><i id="mute-icon" class="fa-solid fa-volume-high text-xs"></i></button>
+        <button id="vibe-toggle" onclick="cycleVibe()" aria-label="Ganti musik latar studio"><i id="vibe-icon" class="fa-solid fa-mug-hot text-xs"></i><span id="vibe-label" class="text-[11px] font-semibold">Lounge</span></button>
+        <button id="history-toggle" onclick="openHistoryModal()" aria-label="Riwayat foto"><i class="fa-solid fa-clock-rotate-left text-xs"></i></button>
       </div>
     </div>
   </header>
