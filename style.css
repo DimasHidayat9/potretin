@@ -27,24 +27,23 @@
          or when the browser/WebView only reserves scrollbar space on the
          right side. This is what causes uneven left/right margins. */
       scrollbar-gutter: stable both-edges;
-      /* Several decorative ".blob" elements use position:fixed with negative
-         offsets (e.g. -top-10/-right-10) so their blur bleeds off-screen.
-         Fixed-position elements are positioned against the viewport, not
-         <body>, so <body>'s overflow-x:hidden alone doesn't clip them.
-         On some Android Chrome/WebView builds this creates extra,
-         asymmetric horizontal scroll room, which is what makes the camera
-         and other centered content look off-center left/right on Android.
-         Hiding overflow-x here too closes that gap at the root level. */
-      overflow-x: hidden;
-      /* FIX: overflow-x set alone (without overflow-y) on the ROOT element is what
-         actually broke vertical scrolling site-wide, especially on iOS Safari and
-         some Android WebViews. Per the CSS Overflow spec, once <html> gets a
-         non-"visible" overflow on any axis, the browser stops propagating <body>'s
-         overflow to the viewport and <html> itself has to become the scrolling
-         box — but with overflow-y left implicit/"visible", many browsers get stuck
-         in an ambiguous state and simply refuse to scroll vertically at all.
-         Making overflow-y explicit here removes that ambiguity. */
-      overflow-y: auto;
+      /* FIX (real root cause of "can't scroll"): this rule used to set
+         overflow-x: hidden here to stop decorative ".blob" elements (which use
+         position:fixed with negative offsets) from bleeding into horizontal
+         scroll room. But giving the ROOT (<html>) element ANY explicit
+         overflow value — even just overflow-x — makes <html> take over as
+         its own scroll box instead of letting <body>'s overflow propagate to
+         the viewport the normal way. That split ownership is exactly what
+         caused the native OS scrollbar (draggable) to end up on a different
+         element than the one wheel/trackpad/touch gestures were targeting —
+         so dragging the scrollbar worked, but normal scroll gestures did not,
+         on both desktop and mobile.
+         The fix is to NOT touch overflow on <html> at all, and instead let
+         <body>'s own overflow-x: hidden (already set via the "overflow-x-
+         hidden" Tailwind class on <body> in index.html) propagate to the
+         viewport the standard way — <body> stays the single, unambiguous
+         scroll container, and its overflow-x: hidden still clips the fixed
+         blob bleed once propagated, so both problems are solved together. */
     }
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     body {
