@@ -1916,7 +1916,7 @@ const video = document.getElementById('webcam');
       ctx.fillText(st[1] || '✨', pad + photoW + 6, pad + 34);
 
       ctx.textAlign = 'center';
-      ctx.fillStyle = isDarkThumb ? '#241f16' : '#ffffff';
+      ctx.fillStyle = isDarkThumb ? '#ffffff' : '#241f16';
       ctx.font = "bold 40px 'Plus Jakarta Sans', sans-serif";
       ctx.fillText('JEPRETIN', W / 2, footerY);
 
@@ -2832,7 +2832,7 @@ const video = document.getElementById('webcam');
 
       const isDark = DARK_FRAME_THEMES.has(currentFrame);
       const paper = isDark ? '#1c1e17' : '#f7f2e8';
-      const ink = isDark ? '#241f16' : '#ffffff';
+      const ink = isDark ? '#ffffff' : '#241f16';
       const inkMuted = isDark ? 'rgba(237,227,208,0.62)' : 'rgba(26,28,20,0.58)';
       const inkFaint = isDark ? 'rgba(237,227,208,0.34)' : 'rgba(26,28,20,0.32)';
       const accent = cfg.accent || '#c9a04a';
@@ -3262,7 +3262,7 @@ const video = document.getElementById('webcam');
 
             const footerY = pad + rows * cell + (rows - 1) * gap + 80;
             exportCtx.textAlign = 'center';
-            exportCtx.fillStyle = isDarkGrid ? '#241f16' : '#ffffff';
+            exportCtx.fillStyle = isDarkGrid ? '#ffffff' : '#241f16';
             exportCtx.font = "bold 54px 'Plus Jakarta Sans', sans-serif";
             exportCtx.fillText('JEPRETIN', W / 2, footerY);
             exportCtx.font = "20px 'Fira Code', monospace";
