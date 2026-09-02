@@ -36,6 +36,15 @@
          and other centered content look off-center left/right on Android.
          Hiding overflow-x here too closes that gap at the root level. */
       overflow-x: hidden;
+      /* FIX: overflow-x set alone (without overflow-y) on the ROOT element is what
+         actually broke vertical scrolling site-wide, especially on iOS Safari and
+         some Android WebViews. Per the CSS Overflow spec, once <html> gets a
+         non-"visible" overflow on any axis, the browser stops propagating <body>'s
+         overflow to the viewport and <html> itself has to become the scrolling
+         box — but with overflow-y left implicit/"visible", many browsers get stuck
+         in an ambiguous state and simply refuse to scroll vertically at all.
+         Making overflow-y explicit here removes that ambiguity. */
+      overflow-y: auto;
     }
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     body {
@@ -1257,10 +1266,16 @@
       50% { background-position: 100% 0; opacity: 1; }
     }
 
-    /* Beri ruang di bawah supaya konten tidak ketutupan dock mengambang */
-    .jp-logged-in body { padding-bottom: 92px; }
+    /* Beri ruang di bawah supaya konten tidak ketutupan dock mengambang.
+       FIX: body's base padding-bottom rule uses !important, which was silently
+       beating this rule regardless of source order/specificity — the extra
+       92px never actually applied, so content at the bottom of the page
+       (e.g. tombol "Ambil Foto", hasil foto, tombol export) ended up hidden
+       behind the fixed bottom-nav dock. Matching it with !important (plus the
+       safe-area inset, same as body's other padding rules) fixes that. */
+    .jp-logged-in body { padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important; }
     .jp-logged-in #landing-screen,
-    .jp-logged-in #welcome-screen { padding-bottom: 92px; }
+    .jp-logged-in #welcome-screen { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
 
     /* Pill indikator brass yang "meleleh" mengikuti posisi tab aktif — posisi & lebar
        diatur lewat JS (setActiveNavTab) memakai transform + width, dianimasikan CSS. */
