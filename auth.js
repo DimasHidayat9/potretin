@@ -114,7 +114,7 @@
   }
 
   /* ---------------- photo history ---------------- */
-  function downscaleForHistory(dataUrl, maxW) {
+  function downscaleForHistory(dataUrl, maxW, quality) {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
@@ -126,7 +126,7 @@
         const ctx = c.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
         try {
-          resolve(c.toDataURL('image/jpeg', 0.9));
+          resolve(c.toDataURL('image/jpeg', quality != null ? quality : 0.9));
         } catch (e) {
           resolve(dataUrl);
         }
@@ -141,7 +141,10 @@
   async function addHistoryEntry(dataUrl, filename, kind, frame) {
     const key = getCurrentUserKey();
     if (!key || !dataUrl) return;
-    const thumb = await downscaleForHistory(dataUrl, 900);
+    // Turun dari 900px/q0.9 ke 560px/q0.75 — ini cuma dipakai sebagai thumbnail
+    // grid 2-4 kolom, jadi tetap tajam tapi jauh lebih ringan untuk didekode
+    // browser saat modal riwayat (Sesi POV) dibuka dan berisi banyak foto.
+    const thumb = await downscaleForHistory(dataUrl, 560, 0.75);
     const store = getHistoryStore();
     const list = store[key] || [];
     list.unshift({
@@ -390,11 +393,32 @@
       d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   }
 
-  function renderHistoryModal() {
+  // Tanda tangan ringkas dari riwayat yang terakhir dirender — dipakai supaya
+  // renderHistoryModal() tidak membongkar-pasang ulang SEMUA kartu (termasuk
+  // memicu ulang animasi card-rise-in & decode ulang semua thumbnail base64)
+  // setiap kali modal "Sesi POV" cuma dibuka, padahal datanya sama persis
+  // dengan render sebelumnya. Ini yang paling terasa sebagai "lag" saat buka.
+  let lastRenderedHistorySignature = null;
+  function historySignature(items) {
+    return items.map(it => it.id).join(',');
+  }
+
+  function renderHistoryModal(force) {
     const grid = $('history-modal-grid');
     const empty = $('history-empty-state');
     if (!grid) return;
     const items = getMyHistory();
+    const sig = historySignature(items);
+    if (!force && sig === lastRenderedHistorySignature) {
+      // Data belum berubah sejak render terakhir — cukup pastikan empty-state
+      // konsisten, tanpa membongkar ulang grid.
+      if (empty) {
+        empty.classList.toggle('hidden', items.length > 0);
+        empty.classList.toggle('flex', items.length === 0);
+      }
+      return;
+    }
+    lastRenderedHistorySignature = sig;
     grid.innerHTML = '';
     if (empty) {
       empty.classList.toggle('hidden', items.length > 0);
