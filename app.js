@@ -1371,7 +1371,7 @@ const video = document.getElementById('webcam');
       const landingVisible = !!landingScreen && landingScreen.style.display !== 'none' && !landingScreen.classList.contains('landing-fade-out');
       const welcomeVisible = !!welcomeScreen && welcomeScreen.style.display !== 'none';
       const welcomeOpen = welcomeVisible && !landingVisible;
-      return overlayOpen || welcomeOpen;
+      return overlayOpen || welcomeOpen || landingVisible;
     }
     function updateBottomNavVisibility() {
       if (!bottomNav) return;
