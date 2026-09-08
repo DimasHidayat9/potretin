@@ -1,0 +1,31 @@
+{
+  "name": "Jepretin — Studio Foto Instan",
+  "short_name": "Jepretin",
+  "description": "Studio foto instan digital: potret, pilih gaya, langsung simpan.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a1c15",
+  "theme_color": "#1a1c15",
+  "icons": [
+    {
+      "src": "jepretin-icon.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
